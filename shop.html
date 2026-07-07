@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop — SheLoveDiamonds</title>
+  <meta name="description" content="Shop the SheLoveDiamonds collection." />
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .shop-hero {
+      padding: 120px var(--section-pad) 60px;
+      background: var(--cream);
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .shop-hero__eyebrow {
+      font-size: 0.6rem; letter-spacing: 0.4em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .shop-hero__eyebrow::before { content:''; width:32px; height:1px; background:var(--gold); }
+    .shop-hero__title {
+      font-family: var(--font-serif); font-size: clamp(2.4rem,5vw,4.5rem);
+      font-weight: 400; color: var(--charcoal); line-height: 1.1; margin-bottom: 16px;
+    }
+    .shop-hero__title em { font-style: italic; color: var(--gold); }
+    .shop-hero__sub { font-size:0.82rem; color:var(--text-mid); max-width:480px; line-height:1.8; }
+    .shop-controls {
+      padding: 32px var(--section-pad); background: var(--white);
+      border-bottom: 1px solid var(--border-soft);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+      position: sticky; top: var(--nav-height); z-index: 100;
+    }
+    .filter-tabs { display:flex; gap:8px; flex-wrap:wrap; }
+    .filter-tab {
+      font-family:var(--font-sans); font-size:0.6rem; letter-spacing:0.2em;
+      text-transform:uppercase; padding:10px 20px;
+      border:1px solid var(--border-soft); background:transparent;
+      color:var(--text-dim); cursor:pointer; transition:all 0.25s;
+    }
+    .filter-tab:hover { border-color:var(--charcoal); color:var(--charcoal); }
+    .filter-tab.active { background:var(--charcoal); border-color:var(--charcoal); color:var(--cream); }
+    .sort-wrap { display:flex; align-items:center; gap:12px; }
+    .sort-label { font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-dim); }
+    .sort-select {
+      font-family:var(--font-sans); font-size:0.65rem; padding:10px 32px 10px 14px;
+      border:1px solid var(--border-soft); background:var(--white); color:var(--charcoal);
+      cursor:pointer; appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B5E54' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 12px center;
+    }
+    .sort-select:focus { outline:none; border-color:var(--gold); }
+    .shop-grid-section { padding:60px var(--section-pad) 100px; background:var(--cream); }
+    .products-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:32px; }
+    .shop-empty { text-align:center; padding:80px 20px; display:none; }
+    .shop-empty__text { font-family:var(--font-serif); font-size:1.1rem; font-style:italic; color:var(--text-dim); }
+    @media(max-width:1024px){ .products-grid{ grid-template-columns:repeat(2,1fr); gap:24px; } }
+    @media(max-width:768px){ .products-grid{ grid-template-columns:1fr; gap:20px; } }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <section class="shop-hero">
+    <div class="shop-hero__eyebrow">The Collection — 2026</div>
+    <h1 class="shop-hero__title">Pieces She<br><em>Earned.</em></h1>
+    <p class="shop-hero__sub">Every piece handcrafted in our London atelier. Lab-grown diamonds, 18K gold-plated sterling silver. Built for the woman who knows her worth.</p>
+  </section>
+  <div class="shop-controls">
+    <div class="filter-tabs" id="filter-tabs">
+      <button class="filter-tab active" data-filter="all">All Pieces</button>
+      <button class="filter-tab" data-filter="Bracelets">Bracelets</button>
+      <button class="filter-tab" data-filter="Personalised">Personalised</button>
+      <button class="filter-tab" data-filter="Bangles">Bangles</button>
+    </div>
+    <div class="sort-wrap">
+      <span class="sort-label">Sort</span>
+      <select class="sort-select" id="sort-select">
+        <option value="featured">Featured</option>
+        <option value="price-asc">Price: Low → High</option>
+        <option value="price-desc">Price: High → Low</option>
+        <option value="name">Name A–Z</option>
+      </select>
+    </div>
+  </div>
+  <section class="shop-grid-section">
+    <div class="products-grid" id="products-grid"></div>
+    <div class="shop-empty" id="shop-empty">
+      <p class="shop-empty__text">No pieces found in this category.</p>
+    </div>
+  </section>
+  <div id="footer-placeholder"></div>
+  <script src="/js/products.js" defer></script>
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/cart.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      injectNav('shop');
+      injectFooter();
+      let activeFilter='all', activeSort='featured';
+      function getFiltered(){
+        let p=[...SLD_PRODUCTS];
+        if(activeFilter!=='all') p=p.filter(x=>x.category===activeFilter);
+        if(activeSort==='price-asc') p.sort((a,b)=>a.price-b.price);
+        if(activeSort==='price-desc') p.sort((a,b)=>b.price-a.price);
+        if(activeSort==='name') p.sort((a,b)=>a.name.localeCompare(b.name));
+        return p;
+      }
+      function renderGrid(){
+        const grid=document.getElementById('products-grid');
+        const empty=document.getElementById('shop-empty');
+        const products=getFiltered();
+        if(!products.length){ grid.innerHTML=''; empty.style.display='block'; return; }
+        empty.style.display='none';
+        grid.innerHTML=products.map(p=>`
+          <a class="product-card" href="/product.html?slug=${p.slug}">
+            <div class="product-card__img">
+              <img src="${p.mainImage}" alt="${p.name}" style="background:#fff"
+                   onerror="this.parentElement.style.background='var(--cream-dark)';this.style.display='none'">
+              ${p.badge?`<span class="product-card__badge">${p.badge}</span>`:''}
+            </div>
+            <div class="product-card__body">
+              <div class="product-card__cat">${p.category}</div>
+              <div class="product-card__name">${p.name}</div>
+              <div class="product-card__desc">${p.shortDesc}</div>
+            </div>
+            <div class="product-card__footer">
+              <span class="product-card__price">${formatPrice(p.price)}</span>
+              <span class="product-card__cta">View Piece</span>
+            </div>
+          </a>`).join('');
+      }
+      document.getElementById('filter-tabs').addEventListener('click',e=>{
+        const btn=e.target.closest('.filter-tab'); if(!btn) return;
+        document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+        btn.classList.add('active'); activeFilter=btn.dataset.filter; renderGrid();
+      });
+      document.getElementById('sort-select').addEventListener('change',e=>{ activeSort=e.target.value; renderGrid(); });
+      const cat=new URLSearchParams(window.location.search).get('cat');
+      if(cat){ activeFilter=cat; document.querySelectorAll('.filter-tab').forEach(b=>b.classList.toggle('active',b.dataset.filter===cat)); }
+      renderGrid();
+    });
+  </script>
+</body>
+</html>

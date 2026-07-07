@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — SheLoveDiamonds</title>
+  <meta name="description" content="Get in touch with SheLoveDiamonds. Book a consultation or ask about bespoke pieces." />
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .contact-hero {
+      padding: 140px var(--section-pad) 80px;
+      background: var(--cream);
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .contact-hero__eyebrow {
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .contact-hero__eyebrow::before {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .contact-hero__title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.4rem, 5vw, 4.5rem);
+      font-weight: 400;
+      color: var(--charcoal);
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .contact-hero__title em { font-style: italic; color: var(--gold); }
+
+    .contact-hero__sub {
+      font-size: 0.85rem;
+      color: var(--text-mid);
+      line-height: 1.8;
+      max-width: 480px;
+    }
+
+    /* Layout */
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      min-height: 600px;
+    }
+
+    /* Info panel */
+    .contact-info {
+      padding: 80px var(--section-pad);
+      background: var(--charcoal);
+    }
+
+    .contact-info__title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--cream);
+      margin-bottom: 40px;
+    }
+
+    .contact-method {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 36px;
+      padding-bottom: 36px;
+      border-bottom: 1px solid rgba(250,247,242,0.08);
+    }
+
+    .contact-method:last-of-type {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .contact-method__icon {
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(250,247,242,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .contact-method__label {
+      font-size: 0.58rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .contact-method__value {
+      font-size: 0.85rem;
+      color: var(--cream);
+      margin-bottom: 4px;
+    }
+
+    .contact-method__note {
+      font-size: 0.7rem;
+      color: rgba(250,247,242,0.4);
+      line-height: 1.5;
+    }
+
+    .contact-method__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border-bottom: 1px solid rgba(184,149,90,0.3);
+      padding-bottom: 2px;
+      transition: all 0.3s;
+    }
+
+    .contact-method__link:hover {
+      color: var(--gold-bright);
+      border-color: var(--gold-bright);
+    }
+
+    /* Form */
+    .contact-form-wrap {
+      padding: 80px var(--section-pad);
+      background: var(--white);
+    }
+
+    .contact-form__title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--charcoal);
+      margin-bottom: 40px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--border-soft);
+      background: var(--cream);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--charcoal);
+      outline: none;
+      transition: border-color 0.25s;
+      appearance: none;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--gold);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 140px;
+      line-height: 1.6;
+    }
+
+    .form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B5E54' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-color: var(--cream);
+      cursor: pointer;
+    }
+
+    .form-submit {
+      width: 100%;
+      padding: 18px 32px;
+      background: var(--charcoal);
+      color: var(--cream);
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 8px;
+    }
+
+    .form-submit:hover { background: var(--charcoal-mid); }
+
+    .form-note {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+
+    /* Success */
+    .form-success {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .form-success__icon {
+      width: 60px;
+      height: 60px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      color: var(--gold);
+    }
+
+    .form-success__title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      color: var(--charcoal);
+      margin-bottom: 12px;
+    }
+
+    .form-success__text {
+      font-size: 0.82rem;
+      color: var(--text-mid);
+      line-height: 1.8;
+    }
+
+    @media (max-width: 1024px) {
+      .contact-layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .form-row { grid-template-columns: 1fr; gap: 0; }
+      .contact-hero { padding: 110px var(--section-pad) 60px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <!-- HERO -->
+  <div class="contact-hero">
+    <div class="contact-hero__eyebrow">Get in Touch</div>
+    <h1 class="contact-hero__title">Let's Talk<br><em>Diamonds.</em></h1>
+    <p class="contact-hero__sub">
+      Whether you're looking for the perfect piece, a bespoke commission,
+      or just want to say hello — we're here.
+    </p>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="contact-layout">
+    <!-- Info -->
+    <div class="contact-info">
+      <h2 class="contact-info__title">Reach Us Directly</h2>
+
+      <div class="contact-method">
+        <div class="contact-method__icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="contact-method__label">WhatsApp</div>
+          <div class="contact-method__value">+44 743 845 1109</div>
+          <div class="contact-method__note">Available Mon–Sat, 9am–6pm GMT.<br>For orders, bespoke enquiries & styling advice.</div>
+          <a href="https://wa.me/447438451109?text=Hi%20SheLoveDiamonds!%20I%27d%20love%20to%20find%20out%20more." target="_blank" class="contact-method__link">
+            Message Us →
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-method">
+        <div class="contact-method__icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="contact-method__label">Email</div>
+          <div class="contact-method__value">info@shelovediamonds.co.uk</div>
+          <div class="contact-method__note">We respond within 24 hours.</div>
+          <a href="mailto:info@shelovediamonds.co.uk" class="contact-method__link">
+            Send Email →
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-method">
+        <div class="contact-method__icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div>
+          <div class="contact-method__label">Instagram</div>
+          <div class="contact-method__value">@shelovediamonds</div>
+          <div class="contact-method__note">Follow for new collections, behind the scenes and styling inspiration.</div>
+          <a href="https://instagram.com/shelovediamonds" target="_blank" class="contact-method__link">
+            Follow Us →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="contact-form-wrap">
+      <h2 class="contact-form__title">Send a Message</h2>
+
+      <form id="contact-form" onsubmit="handleContactForm(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="first-name">First Name *</label>
+            <input class="form-input" type="text" id="first-name" required placeholder="Morayo" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="last-name">Last Name *</label>
+            <input class="form-input" type="text" id="last-name" required placeholder="Adeyemi" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address *</label>
+          <input class="form-input" type="email" id="email" required placeholder="you@example.com" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="enquiry-type">Enquiry Type</label>
+          <select class="form-select" id="enquiry-type">
+            <option value="">Select an option</option>
+            <option value="order">Order Enquiry</option>
+            <option value="bespoke">Bespoke Commission</option>
+            <option value="wholesale">Wholesale / Partnership</option>
+            <option value="press">Press & Media</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="message">Message *</label>
+          <textarea class="form-textarea" id="message" required placeholder="Tell us what you're looking for..."></textarea>
+        </div>
+
+        <button class="form-submit" type="submit">Send Message</button>
+        <p class="form-note">
+          We typically respond within 24 hours. For urgent enquiries, WhatsApp is fastest.
+        </p>
+      </form>
+
+      <div class="form-success" id="form-success">
+        <div class="form-success__icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <h3 class="form-success__title">Message Sent</h3>
+        <p class="form-success__text">
+          Thank you for reaching out. We'll be in touch within 24 hours.<br>
+          Or WhatsApp us for a faster response.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+  <script src="/js/products.js" defer></script>
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/cart.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      injectNav('contact');
+      injectFooter();
+
+      function handleContactForm(e) {
+        e.preventDefault();
+        document.getElementById('contact-form').style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

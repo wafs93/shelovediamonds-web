@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Story — SheLoveDiamonds</title>
+  <meta name="description" content="The story of SheLoveDiamonds and the pieces she earned." />
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body { min-height: 100vh; }
+    .story-shell { padding: 120px var(--section-pad) 100px; background: var(--cream); }
+    .story-hero {
+      padding: 64px 0 48px;
+      display: grid;
+      gap: 18px;
+      max-width: 780px;
+    }
+    .story-hero__eyebrow {
+      font-size: 0.62rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .story-hero__title {
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      color: var(--charcoal);
+      line-height: 1.1;
+    }
+    .story-hero__title em { color: var(--gold); font-style: italic; }
+    .story-hero__text { max-width: 680px; color: var(--text-mid); font-size: 1rem; }
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      margin: 36px 0 56px;
+    }
+    .story-card {
+      background: rgba(255,255,255,0.7);
+      border: 1px solid var(--border-soft);
+      padding: 32px;
+      box-shadow: 0 10px 30px rgba(44,36,32,0.04);
+    }
+    .story-card h2 {
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+      color: var(--charcoal);
+    }
+    .story-card p { color: var(--text-mid); margin-bottom: 10px; }
+    .story-products { padding-top: 10px; }
+    .products-grid { display: grid; gap: 24px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (max-width: 1024px) { .story-grid { grid-template-columns: 1fr; } .products-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 768px) { .story-shell { padding: 110px var(--section-pad) 80px; } .products-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <main class="story-shell">
+    <section class="story-hero">
+      <div class="story-hero__eyebrow">The Story Behind the Brilliance</div>
+      <h1 class="story-hero__title">Pieces She <em>Earned.</em></h1>
+      <p class="story-hero__text">
+        SheLoveDiamonds blends Sierra Leone heritage, intentional craftsmanship, and everyday luxury.
+        Every bracelet is designed to feel like a reward, a ritual, and a reminder that her value is already known.
+      </p>
+      <a href="/shop.html" class="btn btn-dark" style="width:fit-content">Shop the Collection</a>
+    </section>
+
+    <section class="story-grid">
+      <div class="story-card">
+        <h2>Crafted with meaning</h2>
+        <p>
+          Our pieces are designed for women who move with purpose and carry their worth with confidence.
+          From the first sketch to the final polish, every detail is made to feel personal, polished, and lasting.
+        </p>
+      </div>
+      <div class="story-card">
+        <h2>Built for her</h2>
+        <p>
+          Warm cream tones, gold accents, and sculptural silhouettes create a jewellery language that feels timeless.
+          The result is modern luxury with a softer, more intimate point of view.
+        </p>
+      </div>
+    </section>
+
+    <section class="story-products">
+      <div class="section__header" style="margin-bottom: 28px; text-align:left;">
+        <div class="eyebrow left">Featured Pieces</div>
+        <h2 class="section__title" style="font-size: clamp(1.6rem, 2.5vw, 2rem)">The three bracelets she reaches for</h2>
+      </div>
+      <div class="products-grid" id="story-products-grid"></div>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="/js/products.js" defer></script>
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/cart.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      injectNav('story');
+      injectFooter();
+
+      const grid = document.getElementById('story-products-grid');
+      if (grid) {
+        grid.innerHTML = SLD_PRODUCTS.slice(0, 3).map(p => `
+          <a class="product-card" href="/product.html?slug=${p.slug}">
+            <div class="product-card__img">
+              <img src="${p.mainImage}" alt="${p.name}" onerror="this.parentElement.style.background='var(--cream-deeper)'; this.style.display='none'">
+              ${p.badge ? `<span class="product-card__badge">${p.badge}</span>` : ''}
+            </div>
+            <div class="product-card__body">
+              <div class="product-card__cat">${p.category}</div>
+              <div class="product-card__name">${p.name}</div>
+              <div class="product-card__desc">${p.shortDesc}</div>
+            </div>
+            <div class="product-card__footer">
+              <span class="product-card__price">${formatPrice(p.price)}</span>
+              <span class="product-card__cta">View Piece</span>
+            </div>
+          </a>
+        `).join('');
+      }
+    });
+  </script>
+</body>
+</html>

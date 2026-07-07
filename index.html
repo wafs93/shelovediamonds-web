@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SheLoveDiamonds | Luxury Diamond Jewellery</title>
+  <meta name="description" content="Handcrafted diamond jewellery. From the mines of Sierra Leone to the hands of women who know their worth." />
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero__left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px var(--section-pad) 80px;
+      background: var(--cream);
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero__eyebrow {
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero__eyebrow::before {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .hero__title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.8rem, 5vw, 5rem);
+      font-weight: 400;
+      line-height: 1.05;
+      color: var(--charcoal);
+      margin-bottom: 28px;
+    }
+
+    .hero__title em {
+      font-style: italic;
+      color: var(--gold);
+      display: block;
+    }
+
+    .hero__sub {
+      font-size: 0.88rem;
+      color: var(--text-mid);
+      line-height: 1.9;
+      max-width: 420px;
+      margin-bottom: 48px;
+    }
+
+    .hero__actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero__scroll {
+      position: absolute;
+      bottom: 40px;
+      left: var(--section-pad);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .hero__scroll-line {
+      width: 40px;
+      height: 1px;
+      background: var(--text-dim);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero__scroll-line::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--gold);
+      animation: scrollLine 2s ease infinite;
+    }
+
+    @keyframes scrollLine {
+      to { left: 100%; }
+    }
+
+    .hero__right {
+      position: relative;
+      background: var(--cream-dark);
+      overflow: hidden;
+    }
+
+    .hero__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .hero__img-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(250,247,242,0.15) 0%, transparent 60%);
+    }
+
+    .hero__badge {
+      position: absolute;
+      bottom: 48px;
+      left: 48px;
+      background: var(--white);
+      padding: 20px 28px;
+      border-left: 3px solid var(--gold);
+      box-shadow: 0 8px 32px rgba(44,36,32,0.12);
+    }
+
+    .hero__badge-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .hero__badge-value {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--charcoal);
+    }
+
+    /* ── FEATURES STRIP ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: var(--charcoal);
+    }
+
+    .feature-item {
+      padding: 32px 28px;
+      border-right: 1px solid rgba(250,247,242,0.06);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .feature-item:last-child { border-right: none; }
+
+    .feature-icon {
+      color: var(--gold);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .feature-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(250,247,242,0.85);
+      margin-bottom: 4px;
+    }
+
+    .feature-desc {
+      font-size: 0.7rem;
+      color: rgba(250,247,242,0.4);
+      line-height: 1.6;
+    }
+
+    /* ── FEATURED PRODUCTS ── */
+    .featured {
+      padding: 120px var(--section-pad);
+      background: var(--white);
+    }
+
+    /* ── BRAND STORY ── */
+    .brand-story {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 600px;
+    }
+
+    .brand-story__img {
+      position: relative;
+      overflow: hidden;
+      background: var(--cream-deeper);
+    }
+
+    .brand-story__img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .brand-story__content {
+      padding: 100px var(--section-pad) 100px 80px;
+      background: var(--cream);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .brand-story__title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 400;
+      color: var(--charcoal);
+      line-height: 1.2;
+      margin: 16px 0 24px;
+    }
+
+    .brand-story__title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .brand-story__text {
+      font-size: 0.82rem;
+      color: var(--text-mid);
+      line-height: 2;
+      margin-bottom: 40px;
+      max-width: 480px;
+    }
+
+    .brand-story__stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+      padding: 32px 0;
+      border-top: 1px solid var(--border-soft);
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .stat-num {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      color: var(--charcoal);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials {
+      padding: 120px var(--section-pad);
+      background: var(--gold-pale);
+    }
+
+    .testimonials__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 64px;
+    }
+
+    .testimonial-card {
+      background: var(--white);
+      padding: 40px 32px;
+      position: relative;
+    }
+
+    .testimonial-card::before {
+      content: '"';
+      font-family: var(--font-serif);
+      font-size: 5rem;
+      color: var(--gold);
+      opacity: 0.2;
+      position: absolute;
+      top: 16px;
+      left: 24px;
+      line-height: 1;
+    }
+
+    .testimonial-text {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--charcoal);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      padding-top: 24px;
+    }
+
+    .testimonial-author {
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .testimonial-location {
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    /* ── NEWSLETTER ── */
+    .newsletter {
+      padding: 100px var(--section-pad);
+      background: var(--charcoal);
+      text-align: center;
+    }
+
+    .newsletter__title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 400;
+      color: var(--cream);
+      margin: 16px 0 12px;
+    }
+
+    .newsletter__sub {
+      font-size: 0.8rem;
+      color: rgba(250,247,242,0.5);
+      margin-bottom: 40px;
+      line-height: 1.8;
+    }
+
+    .newsletter__form {
+      display: flex;
+      gap: 0;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .newsletter__input {
+      flex: 1;
+      padding: 16px 20px;
+      background: rgba(250,247,242,0.08);
+      border: 1px solid rgba(250,247,242,0.15);
+      border-right: none;
+      color: var(--cream);
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .newsletter__input::placeholder { color: rgba(250,247,242,0.3); }
+    .newsletter__input:focus { border-color: var(--gold); }
+
+    .newsletter__btn {
+      padding: 16px 28px;
+      background: var(--gold);
+      color: var(--white);
+      font-family: var(--font-sans);
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+      white-space: nowrap;
+    }
+
+    .newsletter__btn:hover { background: var(--gold-bright); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero__right { height: 50vw; min-height: 320px; }
+      .hero__left { padding: 80px var(--section-pad) 60px; }
+      .features { grid-template-columns: 1fr 1fr; }
+      .feature-item:nth-child(2) { border-right: none; }
+      .brand-story { grid-template-columns: 1fr; }
+      .brand-story__img { height: 50vw; }
+      .brand-story__content { padding: 60px var(--section-pad); }
+      .testimonials__grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .features { grid-template-columns: 1fr; }
+      .feature-item { border-right: none; border-bottom: 1px solid rgba(250,247,242,0.06); }
+      .hero__badge { left: 20px; bottom: 20px; padding: 14px 20px; }
+      .brand-story__stats { grid-template-columns: 1fr; gap: 16px; }
+      .newsletter__form { flex-direction: column; }
+      .newsletter__input { border-right: 1px solid rgba(250,247,242,0.15); }
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__left">
+      <div class="hero__eyebrow">The 2026 Collection</div>
+      <h1 class="hero__title">
+        Pieces She<br>
+        <em>Earned.</em>
+      </h1>
+      <p class="hero__sub">
+        From the mines of Sierra Leone to the hands of women who know their worth.
+        Handcrafted diamond jewellery. Made with intention.
+      </p>
+      <div class="hero__actions">
+        <a href="/shop.html" class="btn btn-dark">Shop the Collection</a>
+        <a href="/our-story.html" class="btn btn-outline">Our Story</a>
+      </div>
+      <div class="hero__scroll">
+        <span class="hero__scroll-line"></span>
+        Scroll to explore
+      </div>
+    </div>
+
+    <div class="hero__right">
+      <img class="hero__img"
+           src="/images/abayo-rose.png"
+           alt="SheLoveDiamonds Abayo Infinity Bracelet"
+           onerror="this.parentElement.style.background='var(--cream-deeper)'">
+      <div class="hero__img-overlay"></div>
+      <div class="hero__badge">
+        <div class="hero__badge-label">Bestseller</div>
+        <div class="hero__badge-value">Abayo Infinity Bracelet</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="marquee">
+      <span class="marquee-item">Lab-Grown Diamonds</span>
+      <span class="marquee-item">Sierra Leone Heritage</span>
+      <span class="marquee-item">18K Gold Plated</span>
+      <span class="marquee-item">Free UK Shipping</span>
+      <span class="marquee-item">Handcrafted</span>
+      <span class="marquee-item">Bespoke Commissions</span>
+      <span class="marquee-item">Worldwide Delivery</span>
+      <span class="marquee-item">Ethically Sourced</span>
+      <span class="marquee-item">Lab-Grown Diamonds</span>
+      <span class="marquee-item">Sierra Leone Heritage</span>
+      <span class="marquee-item">18K Gold Plated</span>
+      <span class="marquee-item">Free UK Shipping</span>
+      <span class="marquee-item">Handcrafted</span>
+      <span class="marquee-item">Bespoke Commissions</span>
+      <span class="marquee-item">Worldwide Delivery</span>
+      <span class="marquee-item">Ethically Sourced</span>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="features">
+    <div class="feature-item">
+      <div class="feature-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="feature-label">Ethically Sourced</div>
+        <div class="feature-desc">Direct from Sierra Leone mines</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+          <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+        </svg>
+      </div>
+      <div>
+        <div class="feature-label">Free UK Shipping</div>
+        <div class="feature-desc">Worldwide delivery available</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="feature-label">Made with Love</div>
+        <div class="feature-desc">Every piece handcrafted</div>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div>
+        <div class="feature-label">Bespoke Orders</div>
+        <div class="feature-desc">Personalised pieces available</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="featured">
+    <div class="section__header">
+      <div class="eyebrow">The Collection</div>
+      <h2 class="section__title">Pieces That <em>Define Her</em></h2>
+      <p class="section__sub">Each bracelet tells a story. Which one is yours?</p>
+    </div>
+    <div class="grid-3" id="products-grid"></div>
+    <div style="text-align:center; margin-top:48px">
+      <a href="/shop.html" class="btn btn-outline">View All Pieces</a>
+    </div>
+  </section>
+
+  <!-- BRAND STORY -->
+  <section class="brand-story">
+    <div class="brand-story__img">
+      <img src="/images/abayo-rainbow.png" alt="SheLoveDiamonds Story"
+           onerror="this.parentElement.style.background='var(--cream-deeper)'">
+    </div>
+    <div class="brand-story__content">
+      <div class="eyebrow left">Our Heritage</div>
+      <h2 class="brand-story__title">
+        One Brand.<br>
+        <em>Two Continents.</em>
+      </h2>
+      <p class="brand-story__text">
+        From the mineral-rich earth of Sierra Leone to the design ateliers of London —
+        SheLoveDiamonds controls every step of the journey. No middlemen. No compromise.
+        Just diamonds with a story you can trace.
+      </p>
+      <div class="brand-story__stats">
+        <div>
+          <div class="stat-num">2</div>
+          <div class="stat-label">Countries</div>
+        </div>
+        <div>
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Traceable</div>
+        </div>
+        <div>
+          <div class="stat-num">∞</div>
+          <div class="stat-label">Community Impact</div>
+        </div>
+      </div>
+      <a href="/our-story.html" class="btn btn-dark">Read Our Story</a>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <div class="section__header">
+      <div class="eyebrow">What She Says</div>
+      <h2 class="section__title">Women Who <em>Know Their Worth</em></h2>
+    </div>
+    <div class="testimonials__grid">
+      <div class="testimonial-card">
+        <p class="testimonial-text">
+          "I wore my Abayo bracelet to a board meeting and three women stopped me to ask where I got it.
+          It's not just jewellery — it's a statement."
+        </p>
+        <div class="testimonial-author">Adaeze O.</div>
+        <div class="testimonial-location">Lagos, Nigeria</div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">
+          "The personalised name bracelet arrived beautifully packaged. My daughter cried when she opened it.
+          Worth every penny."
+        </p>
+        <div class="testimonial-author">Sandra M.</div>
+        <div class="testimonial-location">London, UK</div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">
+          "Rivals Cartier energy at half the price. The craftsmanship is exceptional.
+          I've already ordered two more pieces."
+        </p>
+        <div class="testimonial-author">Chiamaka B.</div>
+        <div class="testimonial-location">Accra, Ghana</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter">
+    <div class="eyebrow" style="justify-content:center; color:rgba(212,175,112,0.7)">
+      Stay Connected
+    </div>
+    <h2 class="newsletter__title">First to Know.<br>First to Wear.</h2>
+    <p class="newsletter__sub">
+      New collections. Private previews. Stories from Sierra Leone.<br>
+      Join the SheLoveDiamonds inner circle.
+    </p>
+    <form class="newsletter__form" onsubmit="handleNewsletter(event)">
+      <input class="newsletter__input" type="email" placeholder="Your email address" required />
+      <button class="newsletter__btn" type="submit">Join</button>
+    </form>
+  </section>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="/js/products.js" defer></script>
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/cart.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      injectNav('home');
+      injectFooter();
+
+      /* Render product cards */
+      function renderProducts() {
+        const grid = document.getElementById('products-grid');
+        if (!grid) return;
+        grid.innerHTML = SLD_PRODUCTS.map(p => `
+          <a class="product-card" href="/product.html?slug=${p.slug}">
+            <div class="product-card__img">
+              <img src="${p.mainImage}" alt="${p.name}"
+                   onerror="this.parentElement.style.background='var(--cream-deeper)'; this.style.display='none'">
+              ${p.badge ? `<span class="product-card__badge">${p.badge}</span>` : ''}
+            </div>
+            <div class="product-card__body">
+              <div class="product-card__cat">${p.category}</div>
+              <div class="product-card__name">${p.name}</div>
+              <div class="product-card__desc">${p.shortDesc}</div>
+            </div>
+            <div class="product-card__footer">
+              <span class="product-card__price">${formatPrice(p.price)}</span>
+              <span class="product-card__cta">View Piece</span>
+            </div>
+          </a>
+        `).join('');
+      }
+
+      function handleNewsletter(e) {
+        e.preventDefault();
+        showToast('Thank you for joining the inner circle!');
+        e.target.reset();
+      }
+
+      renderProducts();
+    });
+  </script>
+</body>
+</html>

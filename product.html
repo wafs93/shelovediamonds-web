@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product — SheLoveDiamonds</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    .product-page {
+      padding: 100px var(--section-pad) 80px;
+      background: var(--cream);
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 48px;
+    }
+
+    .breadcrumb a { color: var(--text-dim); transition: color 0.2s; }
+    .breadcrumb a:hover { color: var(--charcoal); }
+    .breadcrumb span { color: var(--gold); }
+
+    .product-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    /* Gallery */
+    .product-gallery__main {
+      aspect-ratio: 1/1;
+      background: var(--white);
+      border: 1px solid var(--border-soft);
+      overflow: hidden;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-gallery__main img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 32px;
+      transition: transform 0.5s;
+    }
+
+    .product-gallery__main img:hover { transform: scale(1.05); }
+
+    .product-gallery__thumbs {
+      display: flex;
+      gap: 12px;
+    }
+
+    .thumb {
+      width: 80px;
+      height: 80px;
+      border: 1px solid var(--border-soft);
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--white);
+    }
+
+    .thumb.active { border-color: var(--gold); }
+    .thumb:hover { border-color: var(--charcoal); }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 8px;
+    }
+
+    /* Info */
+    .product-info__cat {
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .product-info__name {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 400;
+      color: var(--charcoal);
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+
+    .product-info__price {
+      font-family: var(--font-serif);
+      font-size: 1.8rem;
+      color: var(--charcoal);
+      margin-bottom: 8px;
+    }
+
+    .product-info__shipping {
+      font-size: 0.7rem;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      margin-bottom: 32px;
+    }
+
+    .product-info__desc {
+      font-size: 0.82rem;
+      color: var(--text-mid);
+      line-height: 2;
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    /* Variants */
+    .variants-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .variants {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .variant-btn {
+      padding: 10px 20px;
+      border: 1px solid var(--border-soft);
+      background: var(--white);
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .variant-btn:hover { border-color: var(--charcoal); color: var(--charcoal); }
+    .variant-btn.active { background: var(--charcoal); border-color: var(--charcoal); color: var(--cream); }
+
+    /* Personalisation field */
+    .personalised-field {
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .personalised-field.show { display: block; }
+
+    .personalised-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .personalised-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--border-soft);
+      background: var(--white);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      color: var(--charcoal);
+      outline: none;
+      transition: border-color 0.25s;
+    }
+
+    .personalised-input:focus { border-color: var(--gold); }
+
+    /* Add to cart */
+    .add-to-cart-wrap {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .btn-add-cart {
+      flex: 1;
+      padding: 18px 32px;
+      background: var(--charcoal);
+      color: var(--cream);
+      font-family: var(--font-sans);
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-add-cart:hover { background: var(--charcoal-mid); }
+
+    .btn-wishlist {
+      width: 56px;
+      height: 56px;
+      border: 1px solid var(--border-soft);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-dim);
+      transition: all 0.25s;
+    }
+
+    .btn-wishlist:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Details */
+    .product-details {
+      margin-top: 32px;
+    }
+
+    .details-title {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+
+    .details-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .details-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.78rem;
+      color: var(--text-mid);
+      line-height: 1.5;
+    }
+
+    .details-list li::before {
+      content: '◆';
+      color: var(--gold);
+      font-size: 0.4rem;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+
+    /* Card logos */
+    .payment-icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    .payment-icons span {
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-right: 4px;
+    }
+
+    .card-icon {
+      padding: 4px 10px;
+      border: 1px solid var(--border-soft);
+      font-size: 0.6rem;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      border-radius: 3px;
+    }
+
+    /* Related */
+    .related {
+      padding: 80px var(--section-pad);
+      background: var(--white);
+    }
+
+    @media (max-width: 1024px) {
+      .product-layout { grid-template-columns: 1fr; gap: 48px; }
+    }
+
+    @media (max-width: 768px) {
+      .product-page { padding: 90px var(--section-pad) 60px; }
+      .product-gallery__thumbs { gap: 8px; }
+      .thumb { width: 64px; height: 64px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <div class="product-page">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="/index.html">Home</a>
+      <span>/</span>
+      <a href="/shop.html">Shop</a>
+      <span>/</span>
+      <span id="breadcrumb-name">Product</span>
+    </div>
+
+    <div class="product-layout">
+      <!-- Gallery -->
+      <div class="product-gallery">
+        <div class="product-gallery__main">
+          <img id="main-img" src="" alt="Product" />
+        </div>
+        <div class="product-gallery__thumbs" id="thumbs"></div>
+      </div>
+
+      <!-- Info -->
+      <div class="product-info">
+        <div class="product-info__cat" id="product-cat"></div>
+        <h1 class="product-info__name" id="product-name"></h1>
+        <div class="product-info__price" id="product-price"></div>
+        <div class="product-info__shipping">✓ Free UK Shipping &nbsp;·&nbsp; Worldwide Delivery</div>
+        <p class="product-info__desc" id="product-desc"></p>
+
+        <!-- Variants -->
+        <div class="variants-label" id="variants-label">Select Gold Tone</div>
+        <div class="variants" id="variants"></div>
+
+        <!-- Personalisation -->
+        <div class="personalised-field" id="personalised-field">
+          <label class="personalised-label" for="personalised-name">Name to engrave</label>
+          <input class="personalised-input" type="text" id="personalised-name"
+                 placeholder="e.g. Morayo" maxlength="20" />
+        </div>
+
+        <!-- Add to cart -->
+        <div class="add-to-cart-wrap">
+          <button class="btn-add-cart" id="add-to-cart-btn" onclick="handleAddToCart()">
+            Add to Bag
+          </button>
+          <button class="btn-wishlist" aria-label="Save to wishlist">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.5">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Details -->
+        <div class="product-details">
+          <div class="details-title">Product Details</div>
+          <ul class="details-list" id="details-list"></ul>
+        </div>
+
+        <!-- Payment icons -->
+        <div class="payment-icons">
+          <span>Secure payment</span>
+          <span class="card-icon">VISA</span>
+          <span class="card-icon">MC</span>
+          <span class="card-icon">AMEX</span>
+          <span class="card-icon">PayPal</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related products -->
+  <section class="related">
+    <div class="section__header" style="text-align:left; margin-bottom:40px">
+      <div class="eyebrow left">You May Also Love</div>
+      <h2 class="section__title" style="font-size:clamp(1.5rem,2.5vw,2rem)">Related Pieces</h2>
+    </div>
+    <div class="grid-3" id="related-grid"></div>
+  </section>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="/js/products.js" defer></script>
+  <script src="/js/nav.js" defer></script>
+  <script src="/js/cart.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      injectNav('shop');
+      injectFooter();
+
+      /* Get product from URL */
+    const slug = new URLSearchParams(window.location.search).get('slug');
+    const product = getProductBySlug(slug);
+
+    if (!product) {
+      document.querySelector('.product-page').innerHTML = `
+        <div style="text-align:center; padding:80px 20px">
+          <p style="font-family:var(--font-serif);font-size:1.5rem;color:var(--text-mid);font-style:italic">
+            Product not found.
+          </p>
+          <a href="/shop.html" class="btn btn-dark" style="margin-top:24px;display:inline-flex">Back to Shop</a>
+        </div>`;
+    } else {
+      /* Populate page */
+      document.title = `${product.name} — SheLoveDiamonds`;
+      document.getElementById('breadcrumb-name').textContent = product.name;
+      document.getElementById('product-cat').textContent = product.category;
+      document.getElementById('product-name').textContent = product.name;
+      document.getElementById('product-price').textContent = formatPrice(product.price);
+      document.getElementById('product-desc').textContent = product.shortDesc;
+
+      /* Main image */
+      const mainImg = document.getElementById('main-img');
+      mainImg.src = product.mainImage;
+      mainImg.alt = product.name;
+
+      /* Thumbnails */
+      const thumbsEl = document.getElementById('thumbs');
+      (product.images || [product.mainImage]).forEach((img, i) => {
+        const div = document.createElement('div');
+        div.className = `thumb ${i === 0 ? 'active' : ''}`;
+        div.innerHTML = `<img src="${img}" alt="${product.name} ${i+1}">`;
+        div.addEventListener('click', () => {
+          mainImg.src = img;
+          document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+          div.classList.add('active');
+        });
+        thumbsEl.appendChild(div);
+      });
+
+      /* Variants */
+      let selectedVariant = product.variants[0];
+      const variantsEl = document.getElementById('variants');
+      product.variants.forEach((v, i) => {
+        const btn = document.createElement('button');
+        btn.className = `variant-btn ${i === 0 ? 'active' : ''}`;
+        btn.textContent = v;
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedVariant = v;
+        });
+        variantsEl.appendChild(btn);
+      });
+
+      /* Personalised field */
+      if (product.isPersonalised) {
+        document.getElementById('personalised-field').classList.add('show');
+      }
+
+      /* Details */
+      const detailsList = document.getElementById('details-list');
+      (product.details || []).forEach(d => {
+        const li = document.createElement('li');
+        li.textContent = d;
+        detailsList.appendChild(li);
+      });
+
+      /* Add to cart */
+      window.handleAddToCart = function() {
+        const nameInput = document.getElementById('personalised-name');
+        const nameVal = nameInput ? nameInput.value.trim() : '';
+        if (product.isPersonalised && !nameVal) {
+          showToast('Please enter a name to engrave');
+          nameInput.focus();
+          return;
+        }
+        const variantLabel = product.isPersonalised && nameVal
+          ? `${selectedVariant} — "${nameVal}"`
+          : selectedVariant;
+        addToCart(product, variantLabel);
+      };
+
+      /* Related products */
+      const related = SLD_PRODUCTS.filter(p => p.id !== product.id).slice(0, 3);
+      const relatedGrid = document.getElementById('related-grid');
+      relatedGrid.innerHTML = related.map(p => `
+        <a class="product-card" href="/product.html?slug=${p.slug}">
+          <div class="product-card__img">
+            <img src="${p.mainImage}" alt="${p.name}" style="background:#fff"
+                 onerror="this.parentElement.style.background='var(--cream-dark)';this.style.display='none'">
+            ${p.badge ? `<span class="product-card__badge">${p.badge}</span>` : ''}
+          </div>
+          <div class="product-card__body">
+            <div class="product-card__cat">${p.category}</div>
+            <div class="product-card__name">${p.name}</div>
+            <div class="product-card__desc">${p.shortDesc}</div>
+          </div>
+          <div class="product-card__footer">
+            <span class="product-card__price">${formatPrice(p.price)}</span>
+            <span class="product-card__cta">View Piece</span>
+          </div>
+        </a>`).join('');
+    }
+    });
+  </script>
+</body>
+</html>
