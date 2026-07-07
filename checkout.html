@@ -281,15 +281,15 @@
         }
 
         const name = `${firstName} ${lastName}`;
-        const address = [address1, address2, `${city}, ${postcode}`, country].filter(Boolean).join('\n');
+        const address = [address1, address2, `${city}, ${postcode}`, country].filter(Boolean).join(', ');
         const cartItems = getCart();
         const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-        const orderLines = cartItems.map(item => `- ${item.name} (${item.variant}) x${item.quantity} — ${formatPrice(item.price * item.quantity)}`).join('\n');
-        const message = `Hi SheLoveDiamonds! I'd like to place an order:\n\nName: ${name}\nEmail: ${email}\nAddress: ${address}\nPhone: ${phone}\n\nOrder:\n${orderLines || '- No items selected'}\n\nTotal: ${formatPrice(subtotal)}\n\nPlease confirm my order. Thank you!`;
+        const itemList = cartItems.map(item => `${item.name} (${item.variant}) x${item.quantity}`).join('\n');
+        const message = `🛍️ New Order from SheLoveDiamonds\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nAddress: ${address}\n\nItems:\n${itemList || 'No items selected'}\n\nTotal: ${formatPrice(subtotal)}\n\nPlease confirm and send payment details. Thank you!`;
 
-        const encoded = encodeURIComponent(message);
-        window.open(`https://wa.me/447438451109?text=${encoded}`, '_blank', 'noopener,noreferrer');
+        const encodedMessage = encodeURIComponent(message);
+        window.open(`https://wa.me/447438451109?text=${encodedMessage}`, '_blank', 'noopener,noreferrer');
       });
     });
   </script>
