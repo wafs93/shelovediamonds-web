@@ -111,15 +111,18 @@
 
     .hero__right {
       position: relative;
-      background: var(--cream-dark);
+      background: #F0EBE3;
       overflow: hidden;
     }
 
     .hero__img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       object-position: center;
+      background: #F0EBE3;
+      padding: 24px;
+      box-sizing: border-box;
     }
 
     .hero__img-overlay {
@@ -630,8 +633,8 @@
         if (!grid) return;
         grid.innerHTML = SLD_PRODUCTS.map(p => `
           <a class="product-card" href="/product.html?slug=${p.slug}">
-            <div class="product-card__img" style="background:#FAF7F2">
-              <img src="${p.mainImage}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;object-position:center;background:#FAF7F2;padding:24px"
+            <div class="product-card__img" style="background:#F0EBE3">
+              <img src="${p.mainImage}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;object-position:center;background:#F0EBE3;padding:24px"
                    onerror="this.parentElement.style.background='var(--cream-deeper)'; this.style.display='none'">
               ${p.badge ? `<span class="product-card__badge">${p.badge}</span>` : ''}
             </div>
