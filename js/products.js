@@ -20,11 +20,11 @@ const SLD_PRODUCTS = [
     Available in Rose Gold, White Gold, and Yellow Gold. Each bracelet arrives in our signature 
     SheLoveDiamonds gift box, ready to be worn or gifted.`,
     variants: ["Rose Gold", "White Gold", "Yellow Gold"],
-    mainImage: "/images/abayo-rose.png",
+    mainImage: "images/abayo-rose.png",
     images: [
-      "/images/abayo-rose.png",
-      "/images/abayo-white.png",
-      "/images/abayo-yellow.png",
+      "images/abayo-rose.png",
+      "images/abayo-white.png",
+      "images/abayo-yellow.png",
     ],
     details: [
       "18K gold plated 925 sterling silver",
@@ -52,9 +52,11 @@ const SLD_PRODUCTS = [
     Crafted from sterling silver in your choice of gold finish. The perfect statement piece 
     for the woman who refuses to be ordinary.`,
     variants: ["Rose Gold", "White Gold", "Yellow Gold"],
-    mainImage: "/images/abayo-rainbow.png",
+    mainImage: "images/abayo-rainbow-rose.jpeg",
     images: [
-      "/images/abayo-rainbow.png",
+      "images/abayo-rainbow-rose.jpeg",
+      "images/abayo-rainbow-white.jpeg",
+      "images/abayo-rainbow-yellow.jpeg",
     ],
     details: [
       "18K gold plated 925 sterling silver",
@@ -81,9 +83,9 @@ const SLD_PRODUCTS = [
     Each piece is made to order. Please include the name you'd like in the order notes 
     at checkout. Allow 5–7 working days for personalised pieces.`,
     variants: ["Rose Gold", "White Gold"],
-    mainImage: "/images/name-bracelet.png",
+    mainImage: "images/name-bracelet.png",
     images: [
-      "/images/name-bracelet.png",
+      "images/name-bracelet.png",
     ],
     details: [
       "18K gold plated 925 sterling silver",

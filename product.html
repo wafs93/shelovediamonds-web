@@ -50,10 +50,11 @@
       height: 100%;
       object-fit: contain;
       padding: 32px;
-      transition: transform 0.5s;
+      transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transform-origin: center;
     }
 
-    .product-gallery__main img:hover { transform: scale(1.05); }
+    .product-gallery__main:hover img { transform: scale(1.08); }
 
     .product-gallery__thumbs {
       display: flex;
@@ -422,6 +423,21 @@
       mainImg.src = product.mainImage;
       mainImg.alt = product.name;
 
+      const variantImageMap = {
+        'Rose Gold': 'images/abayo-rainbow-rose.jpeg',
+        'White Gold': 'images/abayo-rainbow-white.jpeg',
+        'Yellow Gold': 'images/abayo-rainbow-yellow.jpeg',
+      };
+
+      const updateMainImage = (src, altSuffix = '') => {
+        mainImg.src = src;
+        mainImg.alt = altSuffix ? `${product.name} — ${altSuffix}` : product.name;
+        document.querySelectorAll('.thumb').forEach((thumb, index) => {
+          const thumbImg = thumb.querySelector('img');
+          thumb.classList.toggle('active', thumbImg && thumbImg.getAttribute('src') === src);
+        });
+      };
+
       /* Thumbnails */
       const thumbsEl = document.getElementById('thumbs');
       (product.images || [product.mainImage]).forEach((img, i) => {
@@ -429,9 +445,7 @@
         div.className = `thumb ${i === 0 ? 'active' : ''}`;
         div.innerHTML = `<img src="${img}" alt="${product.name} ${i+1}">`;
         div.addEventListener('click', () => {
-          mainImg.src = img;
-          document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
-          div.classList.add('active');
+          updateMainImage(img);
         });
         thumbsEl.appendChild(div);
       });
@@ -447,6 +461,9 @@
           document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           selectedVariant = v;
+          if (product.id === 'abayo-rainbow') {
+            updateMainImage(variantImageMap[v] || product.mainImage, v);
+          }
         });
         variantsEl.appendChild(btn);
       });
