@@ -1,0 +1,11 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/shop", "destination": "/shop.html" },
+    { "source": "/our-story", "destination": "/our-story.html" },
+    { "source": "/contact", "destination": "/contact.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/product/:slug", "destination": "/product.html" }
+  ]
+}
