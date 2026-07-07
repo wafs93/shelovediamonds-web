@@ -85,6 +85,28 @@
       background: var(--cream);
     }
 
+    .btn-pay-card {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 20px;
+      background: var(--gold);
+      color: var(--charcoal);
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s ease;
+    }
+
+    .btn-pay-card:hover {
+      background: #c79b43;
+    }
+
     .checkout-summary {
       position: sticky;
       top: calc(var(--nav-height) + 24px);
@@ -195,9 +217,8 @@
 
           <div class="checkout-card__title" style="margin-top:12px; margin-bottom: 12px;">Payment</div>
           <div class="checkout-payments">
-            <div class="payment-option">Stripe — coming soon</div>
-            <div class="payment-option">PayPal — coming soon</div>
-            <div class="payment-option">Crypto — coming soon</div>
+            <button class="btn-pay-card" id="pay-card-btn" type="button">Pay by Card</button>
+            <div class="payment-option">Secure card payment via Stripe. You will be redirected to complete payment.</div>
           </div>
 
           <button class="btn btn-dark" type="submit" style="margin-top:8px; justify-content:center">Place Order</button>
@@ -261,6 +282,34 @@
         subtotalEl.textContent = formatPrice(subtotal);
         totalEl.textContent = formatPrice(subtotal);
       }
+
+      const payCardBtn = document.getElementById('pay-card-btn');
+      payCardBtn.addEventListener('click', () => {
+        const cartItems = getCart();
+        if (!cartItems.length) {
+          alert('Your bag is empty.');
+          return;
+        }
+
+        const productLinks = cartItems.map(item => {
+          const product = SLD_PRODUCTS.find(p => p.id === item.id);
+          return product ? product.stripeLink : null;
+        }).filter(Boolean);
+
+        const selectedLink = productLinks.length === 1
+          ? productLinks[0]
+          : productLinks.reduce((highest, current) => {
+              const highestProduct = SLD_PRODUCTS.find(p => p.stripeLink === highest);
+              const currentProduct = SLD_PRODUCTS.find(p => p.stripeLink === current);
+              return (highestProduct && currentProduct && currentProduct.price > highestProduct.price) ? current : highest;
+            }, productLinks[0]);
+
+        if (selectedLink) {
+          window.open(selectedLink, '_blank', 'noopener,noreferrer');
+        } else {
+          alert('Stripe payment is not available for this item yet.');
+        }
+      });
 
       document.getElementById('checkout-form').addEventListener('submit', (event) => {
         event.preventDefault();

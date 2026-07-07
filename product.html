@@ -352,6 +352,9 @@
           <button class="btn-add-cart" id="add-to-cart-btn" onclick="handleAddToCart()">
             Add to Bag
           </button>
+          <button class="btn-add-cart" id="buy-now-btn" type="button" onclick="handleBuyNow()" style="flex:1; background:var(--gold); color:var(--charcoal);">
+            Buy Now
+          </button>
           <button class="btn-wishlist" aria-label="Save to wishlist">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                  stroke="currentColor" stroke-width="1.5">
@@ -495,6 +498,14 @@
           : selectedVariant;
         addToCart(product, variantLabel);
         window.location.href = '/cart.html';
+      };
+
+      window.handleBuyNow = function() {
+        if (product.stripeLink) {
+          window.open(product.stripeLink, '_blank', 'noopener,noreferrer');
+        } else {
+          showToast('Stripe payment is not available for this product yet.');
+        }
       };
 
       /* Related products */

@@ -36,6 +36,7 @@ const SLD_PRODUCTS = [
     ],
     shipping: "Free UK shipping. Worldwide delivery available.",
     inStock: true,
+    stripeLink: "https://buy.stripe.com/14A28t7849m92hX3secEw00",
   },
   {
     id: "abayo-rainbow",
@@ -68,6 +69,7 @@ const SLD_PRODUCTS = [
     ],
     shipping: "Free UK shipping. Worldwide delivery available.",
     inStock: true,
+    stripeLink: "https://buy.stripe.com/28E4gB2RO69X9Kp2oacEw01",
   },
   {
     id: "name-bracelet",
@@ -98,6 +100,7 @@ const SLD_PRODUCTS = [
     shipping: "Free UK shipping. Worldwide delivery available.",
     inStock: true,
     isPersonalised: true,
+    stripeLink: "https://buy.stripe.com/5kQkFeAwaqdf4J7IucEw02",
   },
 ];
 
