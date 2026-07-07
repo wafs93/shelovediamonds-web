@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — SheLoveDiamonds</title>
+  <link rel="stylesheet" href="./css/style.css?v=20260707" />
+  <style>
+    .checkout-page {
+      padding: 100px var(--section-pad) 80px;
+      background: var(--cream);
+      min-height: calc(100vh - 220px);
+    }
+
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .checkout-card {
+      background: var(--white);
+      border: 1px solid var(--border-soft);
+      padding: 32px;
+    }
+
+    .checkout-card__title {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      color: var(--charcoal);
+      margin-bottom: 24px;
+    }
+
+    .checkout-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .checkout-form__row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .checkout-form label {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .checkout-form input,
+    .checkout-form textarea {
+      padding: 14px 16px;
+      border: 1px solid var(--border-soft);
+      background: var(--cream);
+      color: var(--charcoal);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .checkout-form input:focus,
+    .checkout-form textarea:focus {
+      border-color: var(--gold);
+    }
+
+    .checkout-payments {
+      margin-top: 24px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .payment-option {
+      border: 1px solid var(--border-soft);
+      padding: 16px 18px;
+      color: var(--text-mid);
+      font-size: 0.85rem;
+      background: var(--cream);
+    }
+
+    .checkout-summary {
+      position: sticky;
+      top: calc(var(--nav-height) + 24px);
+      display: grid;
+      gap: 16px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-soft);
+      font-size: 0.86rem;
+      color: var(--text-mid);
+    }
+
+    .summary-item strong {
+      color: var(--charcoal);
+    }
+
+    .checkout-note {
+      padding: 16px 18px;
+      background: var(--cream);
+      border: 1px solid var(--border-soft);
+      color: var(--text-mid);
+      line-height: 1.7;
+      font-size: 0.85rem;
+    }
+
+    .checkout-note a {
+      color: var(--charcoal);
+      font-weight: 600;
+    }
+
+    @media (max-width: 900px) {
+      .checkout-grid {
+        grid-template-columns: 1fr;
+      }
+      .checkout-summary {
+        position: static;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .checkout-form__row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <section class="checkout-page">
+    <div class="checkout-grid">
+      <div class="checkout-card">
+        <h1 class="checkout-card__title">Billing Details</h1>
+        <form class="checkout-form" id="checkout-form">
+          <div class="checkout-form__row">
+            <label>
+              Full name
+              <input type="text" placeholder="Your name" required />
+            </label>
+            <label>
+              Email
+              <input type="email" placeholder="you@example.com" required />
+            </label>
+          </div>
+          <label>
+            Address
+            <textarea rows="3" placeholder="Street, city, postcode" required></textarea>
+          </label>
+          <label>
+            Phone
+            <input type="tel" placeholder="+44 7000 000000" required />
+          </label>
+
+          <div class="checkout-card__title" style="margin-top:12px; margin-bottom: 12px;">Payment</div>
+          <div class="checkout-payments">
+            <div class="payment-option">Stripe — coming soon</div>
+            <div class="payment-option">PayPal — coming soon</div>
+            <div class="payment-option">Crypto — coming soon</div>
+          </div>
+
+          <button class="btn btn-dark" type="submit" style="margin-top:8px; justify-content:center">Place Order</button>
+        </form>
+      </div>
+
+      <div class="checkout-summary">
+        <div class="checkout-card">
+          <h2 class="checkout-card__title">Order Summary</h2>
+          <div id="checkout-items"></div>
+          <div class="summary-item" style="margin-top:16px">
+            <span>Subtotal</span>
+            <strong id="checkout-subtotal">£0</strong>
+          </div>
+          <div class="summary-item">
+            <span>Shipping</span>
+            <strong style="color:var(--gold)">Free</strong>
+          </div>
+          <div class="summary-item" style="font-family:var(--font-serif); font-size:1.02rem; color:var(--charcoal)">
+            <span>Total</span>
+            <strong id="checkout-total">£0</strong>
+          </div>
+        </div>
+
+        <div class="checkout-note">
+          Payment coming soon — contact us via WhatsApp to complete your order.
+          <br />
+          <a href="https://wa.me/447438451109" target="_blank" rel="noreferrer">Chat on WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="./js/products.js?v=20260707"></script>
+  <script src="./js/nav.js?v=20260707"></script>
+  <script src="./js/cart.js?v=20260707"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      injectNav('checkout');
+      injectFooter();
+
+      const cart = getCart();
+      const container = document.getElementById('checkout-items');
+      const subtotalEl = document.getElementById('checkout-subtotal');
+      const totalEl = document.getElementById('checkout-total');
+
+      if (!cart.length) {
+        container.innerHTML = '<div class="summary-item"><span>Your bag is empty</span><strong>—</strong></div>';
+        subtotalEl.textContent = formatPrice(0);
+        totalEl.textContent = formatPrice(0);
+      } else {
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        container.innerHTML = cart.map(item => `
+          <div class="summary-item">
+            <span>${item.name} × ${item.quantity}</span>
+            <strong>${formatPrice(item.price * item.quantity)}</strong>
+          </div>
+        `).join('');
+        subtotalEl.textContent = formatPrice(subtotal);
+        totalEl.textContent = formatPrice(subtotal);
+      }
+
+      document.getElementById('checkout-form').addEventListener('submit', (event) => {
+        event.preventDefault();
+        window.location.href = 'https://wa.me/447438451109';
+      });
+    });
+  </script>
+</body>
+</html>

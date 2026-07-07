@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Bag — SheLoveDiamonds</title>
+  <link rel="stylesheet" href="./css/style.css?v=20260707" />
+  <style>
+    .cart-page {
+      padding: 100px var(--section-pad) 80px;
+      background: var(--cream);
+      min-height: calc(100vh - 220px);
+    }
+
+    .cart-page__header {
+      margin-bottom: 40px;
+    }
+
+    .cart-page__eyebrow {
+      font-size: 0.56rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+
+    .cart-page__title {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 3vw, 2.8rem);
+      color: var(--charcoal);
+      margin: 0;
+    }
+
+    .cart-page__sub {
+      color: var(--text-mid);
+      margin-top: 12px;
+      line-height: 1.7;
+      max-width: 640px;
+    }
+  </style>
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+
+  <section class="cart-page">
+    <div class="cart-page__header">
+      <div class="cart-page__eyebrow">Your Bag</div>
+      <h1 class="cart-page__title">Beautiful pieces, ready to be worn.</h1>
+      <p class="cart-page__sub">Review your selections, adjust quantities, and continue to checkout when you’re ready.</p>
+    </div>
+
+    <div id="cart-container"></div>
+  </section>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="./js/products.js?v=20260707"></script>
+  <script src="./js/nav.js?v=20260707"></script>
+  <script src="./js/cart.js?v=20260707"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      injectNav('cart');
+      injectFooter();
+      renderCartPage('cart-container');
+    });
+  </script>
+</body>
+</html>

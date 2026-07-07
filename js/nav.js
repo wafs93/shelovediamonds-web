@@ -60,7 +60,7 @@ function injectNav(activePage = '') {
       </ul>
 
       <div class="nav__actions">
-        <a href="/shop.html#cart" class="nav__cart" id="nav-cart">
+        <a href="/cart.html" class="nav__cart" id="nav-cart">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                stroke="currentColor" stroke-width="1.5">
             <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
