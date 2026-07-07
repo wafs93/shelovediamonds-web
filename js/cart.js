@@ -105,6 +105,7 @@ function removeItem(key) {
   renderCartPage('cart-container');
 }
 
+/* Cart page styles — injected if needed */
 const cartStyles = document.createElement('style');
 cartStyles.textContent = `
   .cart-layout {
@@ -141,7 +142,8 @@ cartStyles.textContent = `
     width: 72px;
     height: 72px;
     object-fit: contain;
-    background: var(--white);
+    object-position: center;
+    background: #F7F2E8;
     border: 1px solid var(--border-soft);
     padding: 8px;
     flex-shrink: 0;

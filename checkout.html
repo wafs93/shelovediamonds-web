@@ -54,7 +54,8 @@
     }
 
     .checkout-form input,
-    .checkout-form textarea {
+    .checkout-form textarea,
+    .checkout-form select {
       padding: 14px 16px;
       border: 1px solid var(--border-soft);
       background: var(--cream);
@@ -65,7 +66,8 @@
     }
 
     .checkout-form input:focus,
-    .checkout-form textarea:focus {
+    .checkout-form textarea:focus,
+    .checkout-form select:focus {
       border-color: var(--gold);
     }
 
@@ -145,21 +147,50 @@
         <form class="checkout-form" id="checkout-form">
           <div class="checkout-form__row">
             <label>
-              Full name
-              <input type="text" placeholder="Your name" required />
+              First name
+              <input type="text" id="firstName" placeholder="First name" required />
             </label>
             <label>
+              Last name
+              <input type="text" id="lastName" placeholder="Last name" required />
+            </label>
+          </div>
+          <div class="checkout-form__row">
+            <label>
               Email
-              <input type="email" placeholder="you@example.com" required />
+              <input type="email" id="email" placeholder="you@example.com" required />
+            </label>
+            <label>
+              Phone
+              <input type="tel" id="phone" placeholder="+44 7000 000000" required />
             </label>
           </div>
           <label>
-            Address
-            <textarea rows="3" placeholder="Street, city, postcode" required></textarea>
+            Address line 1
+            <input type="text" id="address1" placeholder="House number and street" required />
           </label>
           <label>
-            Phone
-            <input type="tel" placeholder="+44 7000 000000" required />
+            Address line 2 (optional)
+            <input type="text" id="address2" placeholder="Apartment, suite, unit" />
+          </label>
+          <div class="checkout-form__row">
+            <label>
+              City
+              <input type="text" id="city" placeholder="City" required />
+            </label>
+            <label>
+              Postcode
+              <input type="text" id="postcode" placeholder="Postcode" required />
+            </label>
+          </div>
+          <label>
+            Country
+            <select id="country">
+              <option value="United Kingdom" selected>United Kingdom</option>
+              <option value="United States">United States</option>
+              <option value="Canada">Canada</option>
+              <option value="Ireland">Ireland</option>
+            </select>
           </label>
 
           <div class="checkout-card__title" style="margin-top:12px; margin-bottom: 12px;">Payment</div>
@@ -233,7 +264,32 @@
 
       document.getElementById('checkout-form').addEventListener('submit', (event) => {
         event.preventDefault();
-        window.location.href = 'https://wa.me/447438451109';
+
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const address1 = document.getElementById('address1').value.trim();
+        const address2 = document.getElementById('address2').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const postcode = document.getElementById('postcode').value.trim();
+        const country = document.getElementById('country').value;
+
+        if (!firstName || !lastName || !email || !phone || !address1 || !city || !postcode) {
+          alert('Please fill in all required fields before placing your order.');
+          return;
+        }
+
+        const name = `${firstName} ${lastName}`;
+        const address = [address1, address2, `${city}, ${postcode}`, country].filter(Boolean).join('\n');
+        const cartItems = getCart();
+        const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+        const orderLines = cartItems.map(item => `- ${item.name} (${item.variant}) x${item.quantity} — ${formatPrice(item.price * item.quantity)}`).join('\n');
+        const message = `Hi SheLoveDiamonds! I'd like to place an order:\n\nName: ${name}\nEmail: ${email}\nAddress: ${address}\nPhone: ${phone}\n\nOrder:\n${orderLines || '- No items selected'}\n\nTotal: ${formatPrice(subtotal)}\n\nPlease confirm my order. Thank you!`;
+
+        const encoded = encodeURIComponent(message);
+        window.open(`https://wa.me/447438451109?text=${encoded}`, '_blank', 'noopener,noreferrer');
       });
     });
   </script>
