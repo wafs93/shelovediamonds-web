@@ -11,7 +11,7 @@ const SLD_PRODUCTS = [
     slug: "abayo-infinity-bracelet",
     category: "Bracelets",
     badge: "Bestseller",
-    price: 350,
+    price: 179,
     shortDesc: "Pavé lab-grown diamonds. Infinity symbol. 18K gold plated sterling silver.",
     fullDesc: `The Abayo Infinity Bracelet is a celebration of eternal love and feminine strength. 
     Handcrafted from 18K gold plated sterling silver, each piece features a pavé setting of 
@@ -101,6 +101,54 @@ const SLD_PRODUCTS = [
     inStock: true,
     isPersonalised: true,
     stripeLink: "https://buy.stripe.com/5kQkFeAwaqdf4J7IucEw02",
+  },
+  {
+    id: "shelove-cufflinks",
+    name: "Shelove Cufflinks",
+    slug: "shelove-cufflinks",
+    category: "Cufflinks",
+    badge: "New",
+    price: 179,
+    shortDesc: "Personalised Initial Cufflinks. Stainless steel plated in gold with lab-grown diamonds.",
+    fullDesc: "These cufflinks combine durability, comfort, and timeless elegance. Fully customizable with any initial of your choice — the perfect gift for groomsmen, fathers, husbands, or yourself. Timeless. Personal. Brilliant.",
+    variants: ["Round Face", "Square Face"],
+    mainImage: "images/cufflinks-silver.jpeg",
+    images: ["images/cufflinks-silver.jpeg", "images/cufflinks-variants.jpeg"],
+    details: [
+      "Stainless steel plated in gold",
+      "High-quality lab-grown diamonds in full pavé setting",
+      "Round face with customizable initial",
+      "Polished gold plating",
+      "Gift box included"
+    ],
+    shipping: "Free UK shipping. Worldwide delivery available.",
+    inStock: true,
+    isPersonalised: true,
+    stripeLink: ""
+  },
+  {
+    id: "abayo-rainbow-earrings",
+    name: "ABAYO Rainbow Infinity Earrings",
+    slug: "abayo-rainbow-earrings",
+    category: "Earrings",
+    badge: "New",
+    price: 0,
+    shortDesc: "Gold plated stainless steel with multicoloured Moissanite. Iconic infinity symbol stud earrings.",
+    fullDesc: "Add a burst of vibrant color and timeless symbolism to your look. These stunning stud earrings feature the iconic infinity symbol fully pavé-set with a dazzling spectrum of multicolored Moissanite stones, creating a joyful rainbow effect that sparkles from every angle.",
+    variants: ["Rose Gold"],
+    mainImage: "images/earrings-rainbow.jpeg",
+    images: ["images/earrings-rainbow.jpeg"],
+    details: [
+      "Stainless steel plated in gold",
+      "Multicolored Moissanite in full rainbow pavé setting",
+      "Iconic infinity symbol design",
+      "Modern stud with secure post backing",
+      "Polished gold plating",
+      "Gift box included"
+    ],
+    shipping: "Free UK shipping. Worldwide delivery available.",
+    inStock: true,
+    stripeLink: ""
   },
 ];
 
