@@ -1,10 +1,9 @@
 /* ============================================
-   SHELOVEDIAMONDS — PRODUCTS DATA
-   Add new products here — Morayo can ask
-   Femi to add new ones, or we connect Sanity
-   ============================================ */
+  SHELOVEDIAMONDS — PRODUCTS DATA
+  Uses Sanity as primary source with local fallback
+  ============================================ */
 
-const SLD_PRODUCTS = [
+const SLD_PRODUCTS_FALLBACK = [
   {
     id: "abayo-infinity",
     name: "Abayo Infinity Bracelet",
@@ -151,6 +150,28 @@ const SLD_PRODUCTS = [
     stripeLink: ""
   },
 ];
+
+let SLD_PRODUCTS = SLD_PRODUCTS_FALLBACK.slice();
+let sldProductsLoadPromise = null;
+
+async function ensureProductsLoaded() {
+  if (sldProductsLoadPromise) return sldProductsLoadPromise;
+
+  sldProductsLoadPromise = (async function loadProducts() {
+    if (typeof fetchSanityProducts !== 'function') {
+      return SLD_PRODUCTS;
+    }
+
+    const sanityProducts = await fetchSanityProducts();
+    if (Array.isArray(sanityProducts) && sanityProducts.length) {
+      SLD_PRODUCTS = sanityProducts;
+    }
+
+    return SLD_PRODUCTS;
+  })();
+
+  return sldProductsLoadPromise;
+}
 
 /* ── HELPERS ── */
 function getProductBySlug(slug) {

@@ -82,13 +82,16 @@
 
   <div id="footer-placeholder"></div>
 
-  <script src="js/products.js"></script>
+  <script src="js/sanity-config.js?v=20260720"></script>
+  <script src="js/sanity-client.js?v=20260720"></script>
+  <script src="js/products.js?v=20260720"></script>
   <script src="js/nav.js"></script>
   <script src="js/cart.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
       injectNav('shop');
       injectFooter();
+      await ensureProductsLoaded();
 
       var activeFilter = 'all';
       var activeSort = 'featured';

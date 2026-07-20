@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marketing Dashboard — SheLoveDiamonds</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Didact+Gothic&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold: #B8955A;
+      --gold-bright: #D4AF70;
+      --black: #050505;
+      --surface: #0F0F0F;
+      --surface2: #161616;
+      --border: rgba(184,149,90,0.18);
+      --border-bright: rgba(184,149,90,0.4);
+      --text: #EDE8DF;
+      --text-dim: #7A7570;
+      --cream: #FAF7F2;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Didact Gothic',sans-serif; background:var(--black); color:var(--text); min-height:100vh; }
+
+    /* LOGIN */
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--black);
+      padding: 20px;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 420px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 48px 40px;
+      text-align: center;
+    }
+
+    .login-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .login-sub {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 40px;
+    }
+
+    .login-label {
+      display: block;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      text-align: left;
+    }
+
+    .login-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Didact Gothic', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      margin-bottom: 20px;
+      transition: border-color 0.25s;
+    }
+
+    .login-input:focus { border-color: var(--gold); }
+
+    .login-btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--gold);
+      color: var(--black);
+      font-family: 'Didact Gothic', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .login-btn:hover { background: var(--gold-bright); }
+
+    .login-error {
+      color: #e57373;
+      font-size: 0.7rem;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* DASHBOARD */
+    .dashboard { display: none; min-height: 100vh; }
+
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 64px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dash-header__brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      color: var(--gold);
+    }
+
+    .dash-header__label {
+      font-size: 0.55rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .dash-logout {
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      background: none;
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .dash-logout:hover { color: var(--gold); border-color: var(--gold); }
+
+    .dash-body {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* Sidebar */
+    .dash-sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 32px 0;
+    }
+
+    .sidebar-label {
+      font-size: 0.5rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 0 24px;
+      margin-bottom: 12px;
+    }
+
+    .sidebar-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 14px 24px;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-family: 'Didact Gothic', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-left: 2px solid transparent;
+    }
+
+    .sidebar-btn:hover { color: var(--text); background: rgba(184,149,90,0.04); }
+    .sidebar-btn.active { color: var(--gold); border-left-color: var(--gold); background: rgba(184,149,90,0.06); }
+
+    .sidebar-btn svg { flex-shrink: 0; }
+
+    /* Main content */
+    .dash-main {
+      background: var(--black);
+      padding: 40px;
+      overflow-y: auto;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Panel header */
+    .panel-header {
+      margin-bottom: 32px;
+    }
+
+    .panel-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .panel-sub {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* Input/textarea */
+    .ai-input, .ai-select {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Didact Gothic', sans-serif;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.25s;
+      margin-bottom: 12px;
+    }
+
+    .ai-input:focus, .ai-select:focus { border-color: var(--gold); }
+
+    .ai-textarea {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Didact Gothic', sans-serif;
+      font-size: 0.85rem;
+      outline: none;
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.6;
+      transition: border-color 0.25s;
+      margin-bottom: 12px;
+    }
+
+    .ai-textarea:focus { border-color: var(--gold); }
+
+    /* Options row */
+    .options-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .option-btn {
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover, .option-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--black);
+    }
+
+    /* Generate button */
+    .gen-btn {
+      padding: 14px 32px;
+      background: var(--gold);
+      color: var(--black);
+      font-family: 'Didact Gothic', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gen-btn:hover { background: var(--gold-bright); }
+    .gen-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Output */
+    .ai-output {
+      margin-top: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 24px;
+      min-height: 120px;
+      display: none;
+    }
+
+    .ai-output.show { display: block; }
+
+    .ai-output__label {
+      font-size: 0.52rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .ai-output__text {
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    .ai-output__actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .copy-btn {
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* Loading */
+    .loading {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    .loading-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 1.4s ease infinite;
+    }
+
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes pulse {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Chat */
+    .chat-messages {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 24px;
+      min-height: 320px;
+      max-height: 480px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .chat-msg {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .chat-msg.user { flex-direction: row-reverse; }
+
+    .chat-msg__avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      flex-shrink: 0;
+    }
+
+    .chat-msg.assistant .chat-msg__avatar { background: rgba(184,149,90,0.1); color: var(--gold); }
+
+    .chat-msg__bubble {
+      max-width: 75%;
+      padding: 14px 18px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--text);
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .chat-msg.user .chat-msg__bubble {
+      background: rgba(184,149,90,0.08);
+      border-color: var(--border-bright);
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 0;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-right: none;
+      color: var(--text);
+      font-family: 'Didact Gothic', sans-serif;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .chat-input:focus { border-color: var(--gold); }
+
+    .chat-send {
+      padding: 14px 24px;
+      background: var(--gold);
+      color: var(--black);
+      font-family: 'Didact Gothic', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .chat-send:hover { background: var(--gold-bright); }
+
+    /* Calendar grid */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 24px;
+    }
+
+    .cal-day-header {
+      background: var(--surface);
+      padding: 10px;
+      text-align: center;
+      font-size: 0.52rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .cal-day {
+      background: var(--surface);
+      min-height: 80px;
+      padding: 8px;
+      font-size: 0.62rem;
+      color: var(--text-dim);
+    }
+
+    .cal-day.has-content { border-left: 2px solid var(--gold); }
+
+    .cal-day__num { margin-bottom: 4px; }
+
+    .cal-post {
+      background: rgba(184,149,90,0.12);
+      border-left: 2px solid var(--gold);
+      padding: 3px 6px;
+      font-size: 0.55rem;
+      color: var(--gold);
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    @media(max-width:768px) {
+      .dash-body { grid-template-columns: 1fr; }
+      .dash-sidebar { display: none; }
+      .dash-main { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-box">
+      <div class="login-logo">SheLoveDiamonds</div>
+      <div class="login-sub">Marketing Dashboard</div>
+      <label class="login-label" for="login-pass">Password</label>
+      <input class="login-input" type="password" id="login-pass"
+             placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()" />
+      <button class="login-btn" onclick="doLogin()">Enter Dashboard</button>
+      <div class="login-error" id="login-error">Incorrect password. Please try again.</div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="dashboard" id="dashboard">
+
+    <div class="dash-header">
+      <div>
+        <div class="dash-header__brand">SheLoveDiamonds</div>
+        <div class="dash-header__label">Marketing Assistant</div>
+      </div>
+      <button class="dash-logout" onclick="doLogout()">Logout</button>
+    </div>
+
+    <div class="dash-body">
+      <!-- Sidebar -->
+      <div class="dash-sidebar">
+        <div class="sidebar-label">Tools</div>
+        <button class="sidebar-btn active" onclick="switchTab('chat', this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          AI Assistant
+        </button>
+        <button class="sidebar-btn" onclick="switchTab('social', this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="2" width="20" height="20" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+          </svg>
+          Social Posts
+        </button>
+        <button class="sidebar-btn" onclick="switchTab('email', this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          Email Replies
+        </button>
+        <button class="sidebar-btn" onclick="switchTab('leads', this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          Find Clients
+        </button>
+        <button class="sidebar-btn" onclick="switchTab('calendar', this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          Content Calendar
+        </button>
+      </div>
+
+      <!-- Main -->
+      <div class="dash-main">
+
+        <!-- CHAT -->
+        <div class="tab-panel active" id="tab-chat">
+          <div class="panel-header">
+            <h2 class="panel-title">AI Assistant</h2>
+            <p class="panel-sub">Ask anything about marketing, content, strategy or the brand.</p>
+          </div>
+          <div class="chat-messages" id="chat-messages">
+            <div class="chat-msg assistant">
+              <div class="chat-msg__avatar">AI</div>
+              <div class="chat-msg__bubble">Hello! I'm the SheLoveDiamonds AI Marketing Assistant. I'm here to help with content, strategy, captions, email replies and more. What can I help you with today?</div>
+            </div>
+          </div>
+          <div class="chat-input-row">
+            <input class="chat-input" type="text" id="chat-input"
+                   placeholder="Ask anything — e.g. Write a caption for the Abayo bracelet..."
+                   onkeydown="if(event.key==='Enter')sendChat()" />
+            <button class="chat-send" onclick="sendChat()">Send</button>
+          </div>
+        </div>
+
+        <!-- SOCIAL -->
+        <div class="tab-panel" id="tab-social">
+          <div class="panel-header">
+            <h2 class="panel-title">Social Posts</h2>
+            <p class="panel-sub">Generate ready-to-post captions for any platform.</p>
+          </div>
+          <label style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:8px">Platform</label>
+          <div class="options-row" id="platform-opts">
+            <button class="option-btn active" data-val="Instagram">Instagram</button>
+            <button class="option-btn" data-val="TikTok">TikTok</button>
+            <button class="option-btn" data-val="Facebook">Facebook</button>
+            <button class="option-btn" data-val="Pinterest">Pinterest</button>
+            <button class="option-btn" data-val="X (Twitter)">X / Twitter</button>
+          </div>
+          <label style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:8px">Topic or Product</label>
+          <textarea class="ai-textarea" id="social-topic" placeholder="e.g. New Abayo Infinity Rainbow Bracelet launch, £120, available in 3 gold tones..."></textarea>
+          <button class="gen-btn" onclick="generateSocial()">
+            Generate Caption
+          </button>
+          <div class="ai-output" id="social-output">
+            <div class="ai-output__label">Generated Caption</div>
+            <div class="ai-output__text" id="social-output-text"></div>
+            <div class="ai-output__actions">
+              <button class="copy-btn" onclick="copyOutput('social-output-text')">Copy Caption</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- EMAIL -->
+        <div class="tab-panel" id="tab-email">
+          <div class="panel-header">
+            <h2 class="panel-title">Email Replies</h2>
+            <p class="panel-sub">Paste a customer email and get a polished branded reply.</p>
+          </div>
+          <label style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:8px">Customer Email</label>
+          <textarea class="ai-textarea" id="email-input" placeholder="Paste the customer's email here..." style="min-height:160px"></textarea>
+          <label style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:8px;margin-top:4px">Tone</label>
+          <div class="options-row" id="email-tone-opts">
+            <button class="option-btn active" data-val="warm and professional">Warm & Professional</button>
+            <button class="option-btn" data-val="formal">Formal</button>
+            <button class="option-btn" data-val="friendly and casual">Friendly</button>
+          </div>
+          <button class="gen-btn" onclick="generateEmail()">Draft Reply</button>
+          <div class="ai-output" id="email-output">
+            <div class="ai-output__label">Drafted Reply</div>
+            <div class="ai-output__text" id="email-output-text"></div>
+            <div class="ai-output__actions">
+              <button class="copy-btn" onclick="copyOutput('email-output-text')">Copy Reply</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- LEADS -->
+        <div class="tab-panel" id="tab-leads">
+          <div class="panel-header">
+            <h2 class="panel-title">Find Clients</h2>
+            <p class="panel-sub">Get targeted strategies for finding new customers.</p>
+          </div>
+          <label style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:8px">Target Market</label>
+          <div class="options-row" id="market-opts">
+            <button class="option-btn active" data-val="UK women aged 25-45">UK Women 25–45</button>
+            <button class="option-btn" data-val="Nigerian diaspora in the UK">Nigerian Diaspora UK</button>
+            <button class="option-btn" data-val="gift buyers">Gift Buyers</button>
+            <button class="option-btn" data-val="luxury jewellery enthusiasts">Luxury Enthusiasts</button>
+          </div>
+          <label style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:8px;margin-top:4px">Channel Focus</label>
+          <textarea class="ai-textarea" id="leads-context" placeholder="e.g. We want to grow on Instagram and reach Nigerian women in London for Christmas..." style="min-height:80px"></textarea>
+          <button class="gen-btn" onclick="generateLeads()">Generate Strategy</button>
+          <div class="ai-output" id="leads-output">
+            <div class="ai-output__label">Client Strategy</div>
+            <div class="ai-output__text" id="leads-output-text"></div>
+            <div class="ai-output__actions">
+              <button class="copy-btn" onclick="copyOutput('leads-output-text')">Copy Strategy</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CALENDAR -->
+        <div class="tab-panel" id="tab-calendar">
+          <div class="panel-header">
+            <h2 class="panel-title">Content Calendar</h2>
+            <p class="panel-sub">Generate a month of content ideas for the brand.</p>
+          </div>
+          <label style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:8px">Month & Focus</label>
+          <textarea class="ai-textarea" id="calendar-context" placeholder="e.g. July 2026 — focus on summer gifting, holiday pieces, Sierra Leone heritage story..." style="min-height:80px"></textarea>
+          <button class="gen-btn" onclick="generateCalendar()">Generate Calendar</button>
+          <div class="ai-output" id="calendar-output">
+            <div class="ai-output__label">Content Calendar</div>
+            <div class="ai-output__text" id="calendar-output-text"></div>
+            <div class="ai-output__actions">
+              <button class="copy-btn" onclick="copyOutput('calendar-output-text')">Copy Calendar</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ── AUTH ── */
+    const PASS = 'sld2026morayo'; // Change this password!
+
+    function doLogin() {
+      const val = document.getElementById('login-pass').value;
+      if (val === PASS) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        sessionStorage.setItem('sld_auth', '1');
+      } else {
+        document.getElementById('login-error').style.display = 'block';
+      }
+    }
+
+    function doLogout() {
+      sessionStorage.removeItem('sld_auth');
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('dashboard').style.display = 'none';
+      document.getElementById('login-pass').value = '';
+    }
+
+    if (sessionStorage.getItem('sld_auth') === '1') {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+    }
+
+    /* ── TABS ── */
+    function switchTab(id, btn) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    /* ── OPTION BUTTONS ── */
+    document.querySelectorAll('.options-row').forEach(row => {
+      row.addEventListener('click', e => {
+        const btn = e.target.closest('.option-btn');
+        if (!btn) return;
+        row.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    function getActive(rowId) {
+      const btn = document.querySelector(`#${rowId} .option-btn.active`);
+      return btn ? btn.dataset.val : '';
+    }
+
+    /* ── SYSTEM PROMPT ── */
+    const SYSTEM = `You are the AI Marketing Assistant for SheLoveDiamonds — a luxury diamond jewellery brand based in the UK with Sierra Leone heritage.
+
+Brand voice: elegant, aspirational, warm, confident. Never generic. Never filler.
+
+Products: Abayo Infinity Bracelet (£350, pavé lab-grown diamonds, 18K gold plated, Rose/White/Yellow Gold), Abayo Infinity Rainbow Bracelet (£120, multicolour Moissanite, 3 gold tones), Personalised Name Bracelet (£195, diamond letters, made to order, Rose/White Gold).
+
+Target audience: women aged 25–50 who appreciate fine jewellery; gift-buyers (partners, parents).
+
+Key phrases Morayo uses: "women who know their worth", "from the mines of Sierra Leone", "pieces she earned", "built for her".
+
+Always write polished luxury copy. Ready to use. Concise. No asterisks or markdown in output unless asked.`;
+
+    /* ── API CALL ── */
+    async function callClaude(userPrompt, outputElId, loadingEl) {
+      if (loadingEl) loadingEl.style.display = 'flex';
+
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 1000,
+            system: SYSTEM,
+            messages: [{ role: 'user', content: userPrompt }]
+          })
+        });
+        const data = await res.json();
+        const text = data.content?.[0]?.text || 'No response received.';
+        if (outputElId) document.getElementById(outputElId).textContent = text;
+        return text;
+      } catch (err) {
+        const msg = 'Error connecting to AI. Please try again.';
+        if (outputElId) document.getElementById(outputElId).textContent = msg;
+        return msg;
+      } finally {
+        if (loadingEl) loadingEl.style.display = 'none';
+      }
+    }
+
+    /* ── CHAT ── */
+    const chatHistory = [];
+
+    async function sendChat() {
+      const input = document.getElementById('chat-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+      input.value = '';
+
+      addChatMsg('user', msg);
+      const thinkingEl = addChatMsg('assistant', '...');
+      chatHistory.push({ role: 'user', content: msg });
+
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-6',
+            max_tokens: 1000,
+            system: SYSTEM,
+            messages: chatHistory
+          })
+        });
+        const data = await res.json();
+        const reply = data.content?.[0]?.text || 'No response.';
+        thinkingEl.textContent = reply;
+        chatHistory.push({ role: 'assistant', content: reply });
+      } catch {
+        thinkingEl.textContent = 'Error. Please try again.';
+      }
+    }
+
+    function addChatMsg(role, text) {
+      const msgs = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = `chat-msg ${role}`;
+      div.innerHTML = `
+        <div class="chat-msg__avatar">${role === 'user' ? 'M' : 'AI'}</div>
+        <div class="chat-msg__bubble">${text}</div>`;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+      return div.querySelector('.chat-msg__bubble');
+    }
+
+    /* ── SOCIAL ── */
+    async function generateSocial() {
+      const platform = getActive('platform-opts');
+      const topic = document.getElementById('social-topic').value.trim();
+      if (!topic) { alert('Please describe the topic or product.'); return; }
+      const output = document.getElementById('social-output');
+      output.classList.add('show');
+      document.getElementById('social-output-text').textContent = 'Generating...';
+      const prompt = `Write a ${platform} caption for SheLoveDiamonds. Topic: ${topic}. Include relevant hashtags at the end. Platform-appropriate length and tone.`;
+      await callClaude(prompt, 'social-output-text');
+    }
+
+    /* ── EMAIL ── */
+    async function generateEmail() {
+      const email = document.getElementById('email-input').value.trim();
+      const tone = getActive('email-tone-opts');
+      if (!email) { alert('Please paste the customer email.'); return; }
+      const output = document.getElementById('email-output');
+      output.classList.add('show');
+      document.getElementById('email-output-text').textContent = 'Drafting...';
+      const prompt = `Draft a ${tone} reply to this customer email on behalf of SheLoveDiamonds:\n\n${email}`;
+      await callClaude(prompt, 'email-output-text');
+    }
+
+    /* ── LEADS ── */
+    async function generateLeads() {
+      const market = getActive('market-opts');
+      const context = document.getElementById('leads-context').value.trim();
+      const output = document.getElementById('leads-output');
+      output.classList.add('show');
+      document.getElementById('leads-output-text').textContent = 'Generating strategy...';
+      const prompt = `Create a practical client acquisition strategy for SheLoveDiamonds targeting: ${market}. ${context ? 'Additional context: ' + context : ''} Include specific platforms, tactics, messaging angles and estimated timeline.`;
+      await callClaude(prompt, 'leads-output-text');
+    }
+
+    /* ── CALENDAR ── */
+    async function generateCalendar() {
+      const context = document.getElementById('calendar-context').value.trim();
+      const output = document.getElementById('calendar-output');
+      output.classList.add('show');
+      document.getElementById('calendar-output-text').textContent = 'Building calendar...';
+      const prompt = `Create a 4-week social media content calendar for SheLoveDiamonds. ${context ? 'Focus: ' + context : ''} Format as Week 1, Week 2, Week 3, Week 4 with daily post ideas (Mon-Fri). Include post type, platform, caption angle and hashtag theme for each day.`;
+      await callClaude(prompt, 'calendar-output-text');
+    }
+
+    /* ── COPY ── */
+    function copyOutput(elId) {
+      const text = document.getElementById(elId).textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        showCopyFeedback();
+      });
+    }
+
+    function showCopyFeedback() {
+      const toast = document.createElement('div');
+      toast.textContent = 'Copied to clipboard';
+      toast.style.cssText = 'position:fixed;bottom:32px;right:32px;background:#B8955A;color:#050505;padding:12px 20px;font-size:0.7rem;letter-spacing:0.1em;z-index:9999;';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2000);
+    }
+  </script>
+</body>
+</html>
