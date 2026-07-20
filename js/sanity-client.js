@@ -43,14 +43,9 @@ async function fetchSanityProducts() {
   const endpoint = `${baseUrl}/data/query/${cfg.dataset}?query=${query}`;
 
   try {
-    const headers = { 'Accept': 'application/json' };
-    if (cfg.token) {
-      headers.Authorization = `Bearer ${cfg.token}`;
-    }
-
     const res = await fetch(endpoint, {
       method: 'GET',
-      headers,
+      headers: { 'Accept': 'application/json' },
       cache: cfg.useCdn ? 'default' : 'no-store',
     });
 

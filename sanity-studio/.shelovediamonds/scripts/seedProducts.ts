@@ -100,7 +100,7 @@ const products = [
 async function run() {
   const imagesDir = path.resolve(process.cwd(), '../../images')
   const uploadCache = new Map<string, string>()
-  const canonicalIdsBySlug = new Map(products.map((product) => [product.slug, `product.${product.slug}`]))
+  const targetSlugs = new Set(products.map((product) => product.slug))
 
   async function uploadImageAsset(relativePath: string) {
     const cleanedPath = relativePath.replace(/^\/+/, '')
@@ -131,7 +131,7 @@ async function run() {
   )
 
   const staleProductIds = existingProducts
-    .filter((doc) => doc.slug && canonicalIdsBySlug.has(doc.slug) && canonicalIdsBySlug.get(doc.slug) !== doc._id)
+    .filter((doc) => doc.slug && (targetSlugs.has(doc.slug) || doc.slug === 'public-test'))
     .map((doc) => doc._id)
 
   if (staleProductIds.length) {
@@ -147,8 +147,7 @@ async function run() {
     const mainImageRef = await uploadImageAsset(product.mainImage)
     const galleryImageRefs = await Promise.all(product.images.map(uploadImageAsset))
 
-    tx.createOrReplace({
-      _id: `product.${product.slug}`,
+    tx.create({
       _type: 'product',
       productId: product.id,
       name: product.name,
@@ -186,7 +185,7 @@ async function run() {
 
   await tx.commit()
 
-  const imported = await client.fetch('*[_type == "product"]{name, "slug": slug.current, "mainImage": mainImage.asset->url} | order(name asc)')
+  const imported = await client.fetch('*[_type == "product" && slug.current in $slugs]{name, "slug": slug.current, "mainImage": mainImage.asset->url} | order(name asc)', {slugs: products.map((product) => product.slug)})
   console.log(`Imported ${products.length} products`) 
   console.log(JSON.stringify(imported, null, 2))
 }
