@@ -429,12 +429,6 @@
       mainImg.src = product.mainImage;
       mainImg.alt = product.name;
 
-      const variantImageMap = {
-        'Rose Gold': 'images/abayo-rainbow-rose.jpeg',
-        'White Gold': 'images/abayo-rainbow-white.jpeg',
-        'Yellow Gold': 'images/abayo-rainbow-yellow.jpeg',
-      };
-
       const updateMainImage = (src, altSuffix = '') => {
         mainImg.src = src;
         mainImg.alt = altSuffix ? `${product.name} — ${altSuffix}` : product.name;
@@ -467,9 +461,10 @@
           document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           selectedVariant = v;
-          if (product.id === 'abayo-rainbow') {
-            updateMainImage(variantImageMap[v] || product.mainImage, v);
-          }
+          const variantImage = Array.isArray(product.images) && product.images[i]
+            ? product.images[i]
+            : product.mainImage;
+          updateMainImage(variantImage, v);
         });
         variantsEl.appendChild(btn);
       });

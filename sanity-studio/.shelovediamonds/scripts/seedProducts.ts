@@ -1,4 +1,6 @@
 import {getCliClient} from 'sanity/cli'
+import fs from 'node:fs/promises'
+import path from 'node:path'
 
 const client = getCliClient({apiVersion: '2025-01-01'})
 
@@ -96,9 +98,55 @@ const products = [
 ]
 
 async function run() {
+  const imagesDir = path.resolve(process.cwd(), '../../images')
+  const uploadCache = new Map<string, string>()
+  const canonicalIdsBySlug = new Map(products.map((product) => [product.slug, `product.${product.slug}`]))
+
+  async function uploadImageAsset(relativePath: string) {
+    const cleanedPath = relativePath.replace(/^\/+/, '')
+    const fallbackByPath: Record<string, string> = {
+      'images/abayo-white.png': 'images/abayo-rose.png',
+      'images/abayo-yellow.png': 'images/abayo-rose.png',
+    }
+
+    const resolvedPath = fallbackByPath[cleanedPath] || cleanedPath
+    const imageName = path.basename(resolvedPath)
+    if (uploadCache.has(imageName)) {
+      return uploadCache.get(imageName) as string
+    }
+
+    const fullPath = path.join(imagesDir, imageName)
+    const buffer = await fs.readFile(fullPath)
+    const asset = await client.assets.upload('image', buffer, {
+      filename: imageName,
+      contentType: imageName.endsWith('.png') ? 'image/png' : 'image/jpeg',
+    })
+
+    uploadCache.set(imageName, asset._id)
+    return asset._id
+  }
+
+  const existingProducts = await client.fetch<Array<{_id: string; slug?: string}>>(
+    '*[_type == "product"]{_id, "slug": slug.current}'
+  )
+
+  const staleProductIds = existingProducts
+    .filter((doc) => doc.slug && canonicalIdsBySlug.has(doc.slug) && canonicalIdsBySlug.get(doc.slug) !== doc._id)
+    .map((doc) => doc._id)
+
+  if (staleProductIds.length) {
+    const cleanupTx = client.transaction()
+    staleProductIds.forEach((id) => cleanupTx.delete(id))
+    await cleanupTx.commit()
+    console.log(`Deleted ${staleProductIds.length} duplicate product docs`)
+  }
+
   const tx = client.transaction()
 
-  products.forEach((product) => {
+  for (const product of products) {
+    const mainImageRef = await uploadImageAsset(product.mainImage)
+    const galleryImageRefs = await Promise.all(product.images.map(uploadImageAsset))
+
     tx.createOrReplace({
       _id: `product.${product.slug}`,
       _type: 'product',
@@ -114,19 +162,31 @@ async function run() {
       shortDesc: product.shortDesc,
       fullDesc: product.fullDesc,
       variants: product.variants,
-      mainImage: product.mainImage,
-      images: product.images,
+      mainImage: {
+        _type: 'image',
+        asset: {
+          _type: 'reference',
+          _ref: mainImageRef,
+        },
+      },
+      images: galleryImageRefs.map((imageRef) => ({
+        _type: 'image',
+        asset: {
+          _type: 'reference',
+          _ref: imageRef,
+        },
+      })),
       details: product.details,
       shipping: product.shipping,
       inStock: product.inStock,
       isPersonalised: product.isPersonalised,
       stripeLink: product.stripeLink,
     })
-  })
+  }
 
   await tx.commit()
 
-  const imported = await client.fetch('*[_type == "product"]{name, "slug": slug.current} | order(name asc)')
+  const imported = await client.fetch('*[_type == "product"]{name, "slug": slug.current, "mainImage": mainImage.asset->url} | order(name asc)')
   console.log(`Imported ${products.length} products`) 
   console.log(JSON.stringify(imported, null, 2))
 }
