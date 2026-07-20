@@ -8,5 +8,5 @@ window.SLD_SANITY_CONFIG = {
   dataset: 'production',
   apiVersion: '2025-01-01',
   useCdn: true,
-  token: 'skdDNJ813VoTPsl760GQLUdzIFAaE0KkeWzXaPc3I6SUEDCJZctjO9VhQPxdvlJbPZYnTt9ObcgspuvP14u0eM7x1FKhEEcLQaNXRimmK9OIYw95dHbd5Ga8wknIIc1H6sgamwmPhybkeFBqq4LRJz7nlABDoPlRsZ2gE72hQTKTxOcsYYmC',
+  token: 'skDqIoTG1Meg5BKQqdctTLiScd7Ge4jxjnOys80I7RHNIScWH8fxy5gpg9fqdcLXTfbCfInAKcpjxu8YLv3EDqGIqiQgkraCZtKkQhc4DnEkj1noAcpLKRgjR52pQ2VTbslmeNaw4NUBPS8MfJdNu58AaWJGTEU4vyUTZg3dvzck2ZbLSNmD',
 };
