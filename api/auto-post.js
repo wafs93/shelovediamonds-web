@@ -4,7 +4,7 @@
    - Reads the saved posting schedule from Sanity
    - If now matches the scheduled day and the scheduled time has
      already passed (Europe/London), picks a
-     product, asks Claude for an Instagram caption in the brand voice,
+     product, asks OpenAI for an Instagram caption in the brand voice,
      and saves it as a "scheduledPost" draft in Sanity for review.
    - Does NOT post to Instagram yet (pending API approval).
    ============================================ */
@@ -13,7 +13,7 @@ const SANITY_PROJECT_ID = process.env.SANITY_PROJECT_ID || 'suyafnjq';
 const SANITY_DATASET = process.env.SANITY_DATASET || 'production';
 const SANITY_API_VERSION = '2025-01-01';
 const SANITY_API_TOKEN = process.env.SANITY_API_TOKEN;
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const CRON_SECRET = process.env.CRON_SECRET;
 
 const SETTINGS_DOC_ID = 'postingScheduleSettings';
@@ -102,35 +102,35 @@ function parseHHMM(value) {
 }
 
 async function generateCaption(product) {
-  if (!ANTHROPIC_API_KEY) {
-    throw new Error('Missing ANTHROPIC_API_KEY environment variable');
+  if (!OPENAI_API_KEY) {
+    throw new Error('Missing OPENAI_API_KEY environment variable');
   }
   const prompt = `Write an Instagram caption for SheLoveDiamonds. Product: ${product.name}. Description: ${
     product.shortDesc || product.fullDesc || ''
   }. Include relevant hashtags at the end. Platform-appropriate length and tone.`;
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
+      Authorization: `Bearer ${OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: 'claude-opus-4-8',
+      model: 'gpt-4o-mini',
       max_tokens: 500,
-      system: BRAND_SYSTEM_PROMPT,
-      messages: [{ role: 'user', content: prompt }],
+      messages: [
+        { role: 'system', content: BRAND_SYSTEM_PROMPT },
+        { role: 'user', content: prompt },
+      ],
     }),
   });
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Claude API error: ${res.status} ${text}`);
+    throw new Error(`OpenAI API error: ${res.status} ${text}`);
   }
   const data = await res.json();
-  const textBlock = (data.content || []).find((block) => block.type === 'text');
-  return textBlock ? textBlock.text : '';
+  return data?.choices?.[0]?.message?.content || '';
 }
 
 module.exports = async (req, res) => {
