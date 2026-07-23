@@ -2,7 +2,8 @@
    SHELOVEDIAMONDS — AUTO-POST WORKER
    Invoked on a recurring basis by Vercel Cron (see vercel.json).
    - Reads the saved posting schedule from Sanity
-   - If now matches the scheduled day/hour (Europe/London), picks a
+   - If now matches the scheduled day and the scheduled time has
+     already passed (Europe/London), picks a
      product, asks Claude for an Instagram caption in the brand voice,
      and saves it as a "scheduledPost" draft in Sanity for review.
    - Does NOT post to Instagram yet (pending API approval).
@@ -76,7 +77,28 @@ function getLondonNow() {
   const parts = fmt.formatToParts(new Date());
   const map = {};
   for (const part of parts) map[part.type] = part.value;
-  return { day: map.weekday.toLowerCase(), hour: map.hour, minute: map.minute };
+  const hour = map.hour;
+  const minute = map.minute;
+  return {
+    day: map.weekday.toLowerCase(),
+    hour,
+    minute,
+    minutes: Number(hour) * 60 + Number(minute),
+  };
+}
+
+function parseHHMM(value) {
+  const match = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(value || '');
+  if (!match) {
+    return null;
+  }
+  const hour = match[1];
+  const minute = match[2];
+  return {
+    hour,
+    minute,
+    minutes: Number(hour) * 60 + Number(minute),
+  };
 }
 
 async function generateCaption(product) {
@@ -130,11 +152,21 @@ module.exports = async (req, res) => {
     }
 
     const now = getLondonNow();
-    const scheduledHour = (settings.time || '').split(':')[0];
+    const scheduledTime = parseHHMM(settings.time);
     const scheduledDays = Array.isArray(settings.days) ? settings.days : [];
 
-    if (!scheduledDays.includes(now.day) || scheduledHour !== now.hour) {
-      res.status(200).json({ skipped: true, reason: 'not the scheduled day/hour', now });
+    if (!scheduledTime) {
+      res.status(200).json({ skipped: true, reason: 'posting time is missing or invalid' });
+      return;
+    }
+
+    if (!scheduledDays.includes(now.day) || now.minutes < scheduledTime.minutes) {
+      res.status(200).json({
+        skipped: true,
+        reason: 'not the scheduled day or time has not passed yet',
+        now,
+        scheduledTime: settings.time,
+      });
       return;
     }
 

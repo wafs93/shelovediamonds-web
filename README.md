@@ -46,4 +46,4 @@ Set these in the Vercel project's Environment Variables (never in client-side co
 | `CRON_SECRET` | Optional. If set, Vercel Cron's `Authorization: Bearer $CRON_SECRET` header is required to trigger `/api/auto-post` |
 | `SANITY_PROJECT_ID`, `SANITY_DATASET` | Optional — default to the values already hardcoded in `js/sanity-config.js` |
 
-The cron schedule in `vercel.json` runs hourly (`0 * * * *`). Hourly crons require a Vercel Pro (or higher) plan — the Hobby plan only allows daily cron jobs.
+The cron schedule in `vercel.json` runs daily (`0 9 * * *`, 9am UTC). Daily crons are allowed on Vercel's Hobby plan, and the worker only generates a draft when the selected weekday matches and the configured Europe/London time has already passed.
