@@ -580,6 +580,13 @@
           </svg>
           Content Calendar
         </button>
+        <button class="sidebar-btn" onclick="switchTab('autopost', this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Auto-Post
+        </button>
       </div>
 
       <!-- Main -->
@@ -700,13 +707,58 @@
           </div>
         </div>
 
+        <!-- AUTO-POST -->
+        <div class="tab-panel" id="tab-autopost">
+          <div class="panel-header">
+            <h2 class="panel-title">Instagram Auto-Post</h2>
+            <p class="panel-sub">Set a posting schedule and preview what's been generated — nothing posts to Instagram until that's switched on.</p>
+          </div>
+
+          <h3 style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:400;color:var(--gold);margin-bottom:16px">Posting Schedule</h3>
+
+          <label style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:8px">Days</label>
+          <div class="options-row" id="autopost-days-opts">
+            <button class="option-btn" data-val="monday">Mon</button>
+            <button class="option-btn" data-val="tuesday">Tue</button>
+            <button class="option-btn" data-val="wednesday">Wed</button>
+            <button class="option-btn" data-val="thursday">Thu</button>
+            <button class="option-btn" data-val="friday">Fri</button>
+            <button class="option-btn" data-val="saturday">Sat</button>
+            <button class="option-btn" data-val="sunday">Sun</button>
+          </div>
+
+          <label style="font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);display:block;margin-bottom:8px;margin-top:4px">Posting Time (Europe/London)</label>
+          <input class="ai-input" type="time" id="autopost-time" style="max-width:200px" value="10:00" />
+
+          <label style="display:flex;align-items:center;gap:10px;margin:16px 0 24px;font-size:0.75rem;color:var(--text-dim);cursor:pointer">
+            <input type="checkbox" id="autopost-enabled" style="width:16px;height:16px" />
+            Enable automated posting
+          </label>
+
+          <button class="gen-btn" onclick="savePostingSchedule()">Save Schedule</button>
+          <span id="autopost-save-status" style="margin-left:16px;font-size:0.7rem;color:var(--text-dim)"></span>
+
+          <div style="margin-top:48px;padding-top:32px;border-top:1px solid var(--border)">
+            <h3 style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:400;color:var(--gold);margin-bottom:8px">Upcoming Posts</h3>
+            <p class="panel-sub" style="margin-bottom:20px">Generated captions and images queued for review.</p>
+            <div id="upcoming-posts-list" style="display:flex;flex-direction:column;gap:16px"></div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
+  <script src="js/sanity-config.js"></script>
   <script>
     /* ── AUTH ── */
     const PASS = 'sld2026morayo'; // Change this password!
+
+    // Shared secret sent as the x-dashboard-key header when saving the
+    // posting schedule. Must match the DASHBOARD_SECRET env var set in
+    // Vercel — it gates writes the same way PASS gates dashboard access,
+    // it is not a substitute for storing real secrets server-side.
+    const DASHBOARD_API_KEY = PASS;
 
     function doLogin() {
       const val = document.getElementById('login-pass').value;
@@ -737,6 +789,10 @@
       document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('tab-' + id).classList.add('active');
       btn.classList.add('active');
+      if (id === 'autopost') {
+        loadPostingSchedule();
+        loadUpcomingPosts();
+      }
     }
 
     /* ── OPTION BUTTONS ── */
@@ -744,6 +800,11 @@
       row.addEventListener('click', e => {
         const btn = e.target.closest('.option-btn');
         if (!btn) return;
+        if (row.id === 'autopost-days-opts') {
+          // Days are a multi-select — toggle instead of exclusive-select
+          btn.classList.toggle('active');
+          return;
+        }
         row.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
       });
@@ -752,6 +813,10 @@
     function getActive(rowId) {
       const btn = document.querySelector(`#${rowId} .option-btn.active`);
       return btn ? btn.dataset.val : '';
+    }
+
+    function getActiveMulti(rowId) {
+      return Array.from(document.querySelectorAll(`#${rowId} .option-btn.active`)).map(b => b.dataset.val);
     }
 
     /* ── SYSTEM PROMPT ── */
@@ -899,6 +964,99 @@ Always write polished luxury copy. Ready to use. Concise. No asterisks or markdo
       toast.style.cssText = 'position:fixed;bottom:32px;right:32px;background:#B8955A;color:#050505;padding:12px 20px;font-size:0.7rem;letter-spacing:0.1em;z-index:9999;';
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 2000);
+    }
+
+    /* ── AUTO-POST ── */
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str == null ? '' : String(str);
+      return div.innerHTML;
+    }
+
+    async function loadPostingSchedule() {
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+        const s = data.settings;
+        if (!s) return;
+        document.getElementById('autopost-enabled').checked = !!s.enabled;
+        document.getElementById('autopost-time').value = s.time || '10:00';
+        document.querySelectorAll('#autopost-days-opts .option-btn').forEach(btn => {
+          btn.classList.toggle('active', Array.isArray(s.days) && s.days.includes(btn.dataset.val));
+        });
+      } catch (err) {
+        console.warn('Failed to load posting schedule', err);
+      }
+    }
+
+    async function savePostingSchedule() {
+      const statusEl = document.getElementById('autopost-save-status');
+      const days = getActiveMulti('autopost-days-opts');
+      const time = document.getElementById('autopost-time').value;
+      const enabled = document.getElementById('autopost-enabled').checked;
+
+      if (!time) { alert('Please choose a posting time.'); return; }
+      if (!days.length) { alert('Please select at least one posting day.'); return; }
+
+      statusEl.textContent = 'Saving...';
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-dashboard-key': DASHBOARD_API_KEY,
+          },
+          body: JSON.stringify({ enabled, days, time }),
+        });
+        if (!res.ok) throw new Error('Save failed');
+        statusEl.textContent = 'Saved.';
+        setTimeout(() => { statusEl.textContent = ''; }, 3000);
+      } catch (err) {
+        statusEl.textContent = 'Error saving schedule.';
+      }
+    }
+
+    async function loadUpcomingPosts() {
+      const list = document.getElementById('upcoming-posts-list');
+      if (!list) return;
+      list.innerHTML = '<div style="color:var(--text-dim);font-size:0.75rem">Loading...</div>';
+
+      const cfg = window.SLD_SANITY_CONFIG;
+      if (!cfg || !cfg.projectId) {
+        list.innerHTML = '<div style="color:var(--text-dim);font-size:0.75rem">Sanity is not configured.</div>';
+        return;
+      }
+
+      const query = `*[_type == "scheduledPost"] | order(generatedAt desc) [0...10]{ _id, productName, caption, imageUrl, status, generatedAt }`;
+      const baseUrl = `https://${cfg.projectId}.api.sanity.io/v${cfg.apiVersion}`;
+      const endpoint = `${baseUrl}/data/query/${cfg.dataset}?query=${encodeURIComponent(query)}`;
+
+      try {
+        const res = await fetch(endpoint, { headers: { Accept: 'application/json' } });
+        const data = await res.json();
+        const posts = Array.isArray(data.result) ? data.result : [];
+
+        if (!posts.length) {
+          list.innerHTML = '<div style="color:var(--text-dim);font-size:0.75rem">No posts generated yet. Once auto-posting runs on schedule, drafts will appear here.</div>';
+          return;
+        }
+
+        list.innerHTML = posts.map(p => `
+          <div style="display:flex;gap:16px;background:var(--surface);border:1px solid var(--border);padding:16px">
+            ${p.imageUrl ? `<img src="${escapeHtml(p.imageUrl)}" alt="" style="width:80px;height:80px;object-fit:cover;flex-shrink:0" />` : ''}
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:6px">
+                <span style="font-size:0.75rem;color:var(--gold)">${escapeHtml(p.productName || 'Untitled product')}</span>
+                <span style="font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim)">${escapeHtml(p.status || 'draft')}</span>
+              </div>
+              <div style="font-size:0.78rem;color:var(--text);line-height:1.6;white-space:pre-wrap">${escapeHtml(p.caption || '')}</div>
+              <div style="font-size:0.6rem;color:var(--text-dim);margin-top:8px">${p.generatedAt ? escapeHtml(new Date(p.generatedAt).toLocaleString('en-GB')) : ''}</div>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        list.innerHTML = '<div style="color:var(--text-dim);font-size:0.75rem">Failed to load upcoming posts.</div>';
+      }
     }
   </script>
 </body>
