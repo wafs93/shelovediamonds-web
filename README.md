@@ -32,17 +32,21 @@ Set public Sanity config in [js/sanity-config.js](js/sanity-config.js):
 
 When configured, product pages will pull from Sanity first, with local fallback data from [js/products.js](js/products.js).
 
+## Marketing Dashboard (AI tools)
+
+Every AI tool in `/dashboard` (AI Assistant, Social Posts, Email Replies, Find Clients, Content Calendar) runs on **OpenAI** (`gpt-4o-mini`, or `gpt-4o` for the longer Content Calendar output) via a single server-side proxy, `/api/ai-chat`. The browser never holds an API key — `dashboard.html` sends the brand-voice system prompt and the user's message to `/api/ai-chat`, which calls OpenAI with `OPENAI_API_KEY` from Vercel's environment and returns just the generated text. Only one AI provider is required across the whole project — there is no Anthropic key anywhere.
+
 ## Instagram Auto-Post (foundation)
 
-Morayo can set a posting schedule from the **Auto-Post** tab in `/dashboard`. On the schedule, a Vercel Cron job hits `/api/auto-post`, which picks a product, drafts an Instagram caption with OpenAI in the brand voice, and saves it as a `scheduledPost` draft in Sanity for review — it does not post to Instagram yet.
+Morayo can set a posting schedule from the **Auto-Post** tab in `/dashboard`. On the schedule, a Vercel Cron job hits `/api/auto-post`, which picks a product, drafts an Instagram caption with OpenAI in the brand voice, and saves it as a `scheduledPost` draft in Sanity for review — it does not post to Instagram yet. `/api/auto-post` and `/api/ai-chat` share the same OpenAI request/response handling via `api/_lib/openai.js`.
 
-Set these in the Vercel project's Environment Variables (never in client-side code):
+Set these in the Vercel project's Environment Variables (never in client-side code) — **only these three are required**, plus two optional ones:
 
 | Variable | Purpose |
 | --- | --- |
-| `OPENAI_API_KEY` | OpenAI API key, used only by `/api/auto-post` |
+| `OPENAI_API_KEY` | OpenAI API key — powers every dashboard AI tool (`/api/ai-chat`) and the auto-post worker (`/api/auto-post`) |
 | `SANITY_API_TOKEN` | Sanity token with **write** access, used by `/api/settings` (POST) and `/api/auto-post` |
-| `DASHBOARD_SECRET` | Shared secret the dashboard sends as `x-dashboard-key` when saving the schedule — must equal the `DASHBOARD_API_KEY` constant in `dashboard.html` (currently the same value as the dashboard login password) |
+| `DASHBOARD_SECRET` | Shared secret the dashboard sends as `x-dashboard-key` to `/api/settings` and `/api/ai-chat` — must equal the `DASHBOARD_API_KEY` constant in `dashboard.html` (currently the same value as the dashboard login password) |
 | `CRON_SECRET` | Optional. If set, Vercel Cron's `Authorization: Bearer $CRON_SECRET` header is required to trigger `/api/auto-post` |
 | `SANITY_PROJECT_ID`, `SANITY_DATASET` | Optional — default to the values already hardcoded in `js/sanity-config.js` |
 

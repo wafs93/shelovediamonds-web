@@ -832,23 +832,26 @@ Key phrases Morayo uses: "women who know their worth", "from the mines of Sierra
 
 Always write polished luxury copy. Ready to use. Concise. No asterisks or markdown in output unless asked.`;
 
-    /* ── API CALL ── */
-    async function callClaude(userPrompt, outputElId, loadingEl) {
+    /* ── API CALL (OpenAI, via /api/ai-chat — the key stays server-side) ── */
+    async function callAI(userPrompt, outputElId, loadingEl, opts = {}) {
       if (loadingEl) loadingEl.style.display = 'flex';
 
       try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
+        const res = await fetch('/api/ai-chat', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-dashboard-key': DASHBOARD_API_KEY,
+          },
           body: JSON.stringify({
-            model: 'claude-sonnet-4-6',
-            max_tokens: 1000,
             system: SYSTEM,
-            messages: [{ role: 'user', content: userPrompt }]
+            messages: [{ role: 'user', content: userPrompt }],
+            model: opts.model,
+            max_tokens: opts.maxTokens,
           })
         });
         const data = await res.json();
-        const text = data.content?.[0]?.text || 'No response received.';
+        const text = data.text || data.error || 'No response received.';
         if (outputElId) document.getElementById(outputElId).textContent = text;
         return text;
       } catch (err) {
@@ -874,18 +877,19 @@ Always write polished luxury copy. Ready to use. Concise. No asterisks or markdo
       chatHistory.push({ role: 'user', content: msg });
 
       try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
+        const res = await fetch('/api/ai-chat', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-dashboard-key': DASHBOARD_API_KEY,
+          },
           body: JSON.stringify({
-            model: 'claude-sonnet-4-6',
-            max_tokens: 1000,
             system: SYSTEM,
-            messages: chatHistory
+            messages: chatHistory,
           })
         });
         const data = await res.json();
-        const reply = data.content?.[0]?.text || 'No response.';
+        const reply = data.text || data.error || 'No response.';
         thinkingEl.textContent = reply;
         chatHistory.push({ role: 'assistant', content: reply });
       } catch {
@@ -914,7 +918,7 @@ Always write polished luxury copy. Ready to use. Concise. No asterisks or markdo
       output.classList.add('show');
       document.getElementById('social-output-text').textContent = 'Generating...';
       const prompt = `Write a ${platform} caption for SheLoveDiamonds. Topic: ${topic}. Include relevant hashtags at the end. Platform-appropriate length and tone.`;
-      await callClaude(prompt, 'social-output-text');
+      await callAI(prompt, 'social-output-text');
     }
 
     /* ── EMAIL ── */
@@ -926,7 +930,7 @@ Always write polished luxury copy. Ready to use. Concise. No asterisks or markdo
       output.classList.add('show');
       document.getElementById('email-output-text').textContent = 'Drafting...';
       const prompt = `Draft a ${tone} reply to this customer email on behalf of SheLoveDiamonds:\n\n${email}`;
-      await callClaude(prompt, 'email-output-text');
+      await callAI(prompt, 'email-output-text');
     }
 
     /* ── LEADS ── */
@@ -937,7 +941,7 @@ Always write polished luxury copy. Ready to use. Concise. No asterisks or markdo
       output.classList.add('show');
       document.getElementById('leads-output-text').textContent = 'Generating strategy...';
       const prompt = `Create a practical client acquisition strategy for SheLoveDiamonds targeting: ${market}. ${context ? 'Additional context: ' + context : ''} Include specific platforms, tactics, messaging angles and estimated timeline.`;
-      await callClaude(prompt, 'leads-output-text');
+      await callAI(prompt, 'leads-output-text');
     }
 
     /* ── CALENDAR ── */
@@ -947,7 +951,8 @@ Always write polished luxury copy. Ready to use. Concise. No asterisks or markdo
       output.classList.add('show');
       document.getElementById('calendar-output-text').textContent = 'Building calendar...';
       const prompt = `Create a 4-week social media content calendar for SheLoveDiamonds. ${context ? 'Focus: ' + context : ''} Format as Week 1, Week 2, Week 3, Week 4 with daily post ideas (Mon-Fri). Include post type, platform, caption angle and hashtag theme for each day.`;
-      await callClaude(prompt, 'calendar-output-text');
+      // Longer, more structured output — use gpt-4o with more headroom than the other tools.
+      await callAI(prompt, 'calendar-output-text', null, { model: 'gpt-4o', maxTokens: 2000 });
     }
 
     /* ── COPY ── */

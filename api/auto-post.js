@@ -9,6 +9,8 @@
    - Does NOT post to Instagram yet (pending API approval).
    ============================================ */
 
+const { callOpenAI } = require('./_lib/openai');
+
 const SANITY_PROJECT_ID = process.env.SANITY_PROJECT_ID || 'suyafnjq';
 const SANITY_DATASET = process.env.SANITY_DATASET || 'production';
 const SANITY_API_VERSION = '2025-01-01';
@@ -102,35 +104,17 @@ function parseHHMM(value) {
 }
 
 async function generateCaption(product) {
-  if (!OPENAI_API_KEY) {
-    throw new Error('Missing OPENAI_API_KEY environment variable');
-  }
   const prompt = `Write an Instagram caption for SheLoveDiamonds. Product: ${product.name}. Description: ${
     product.shortDesc || product.fullDesc || ''
   }. Include relevant hashtags at the end. Platform-appropriate length and tone.`;
 
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      max_tokens: 500,
-      messages: [
-        { role: 'system', content: BRAND_SYSTEM_PROMPT },
-        { role: 'user', content: prompt },
-      ],
-    }),
+  return callOpenAI({
+    apiKey: OPENAI_API_KEY,
+    model: 'gpt-4o-mini',
+    maxTokens: 500,
+    system: BRAND_SYSTEM_PROMPT,
+    messages: [{ role: 'user', content: prompt }],
   });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`OpenAI API error: ${res.status} ${text}`);
-  }
-  const data = await res.json();
-  return data?.choices?.[0]?.message?.content || '';
 }
 
 module.exports = async (req, res) => {
