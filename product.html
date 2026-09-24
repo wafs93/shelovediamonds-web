@@ -3,7 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Product — SheLoveDiamonds</title>
+  <title>Lab-Grown Diamond Bangles &amp; Jewellery | SheLoveDiamonds</title>
+  <meta name="description" content="Discover lab-grown diamond bangles, diamond cufflinks and personalised jewellery from SheLoveDiamonds, each piece gift-boxed, with free UK shipping included." />
+  <link rel="canonical" href="https://www.shelovediamonds.co.uk/product" id="canonical-link" />
+  <meta property="og:type" content="product" />
+  <meta property="og:site_name" content="SheLoveDiamonds" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:title" content="Lab-Grown Diamond Bangles &amp; Jewellery | SheLoveDiamonds" />
+  <meta property="og:description" content="Discover lab-grown diamond bangles, diamond cufflinks and personalised jewellery from SheLoveDiamonds, each piece gift-boxed, with free UK shipping included." />
+  <meta property="og:url" content="https://www.shelovediamonds.co.uk/product" />
+  <meta property="og:image" content="https://www.shelovediamonds.co.uk/images/abayo-rainbow-white.jpeg" />
+  <meta property="og:image:width" content="1248" />
+  <meta property="og:image:height" content="832" />
+  <meta property="og:image:alt" content="White gold Abayo Infinity Rainbow bangle with a multicolour Moissanite infinity symbol" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="stylesheet" href="./css/style.css?v=20260707" />
   <style>
     .product-page {
@@ -323,7 +336,7 @@
       <!-- Gallery -->
       <div class="product-gallery">
         <div class="product-gallery__main">
-          <img id="main-img" src="" alt="Product" />
+          <img id="main-img" src="" alt="" />
         </div>
         <div class="product-gallery__thumbs" id="thumbs"></div>
       </div>
@@ -394,9 +407,9 @@
 
   <script src="./js/sanity-config.js?v=20260720"></script>
   <script src="./js/sanity-client.js?v=20260720"></script>
-  <script src="./js/products.js?v=20260720"></script>
-  <script src="./js/nav.js?v=20260707"></script>
-  <script src="./js/cart.js?v=20260707"></script>
+  <script src="./js/products.js?v=20260924"></script>
+  <script src="./js/nav.js?v=20260924"></script>
+  <script src="./js/cart.js?v=20260924"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       injectNav('shop');
@@ -417,7 +430,30 @@
         </div>`;
     } else {
       /* Populate page */
-      document.title = `${product.name} — SheLoveDiamonds`;
+      const pageUrl = `${window.location.origin}/product?slug=${encodeURIComponent(product.slug)}`;
+      const seoTitle = productSeoTitle(product);
+      const seoDesc = productSeoDescription(product);
+      const setMeta = (selector, value) => {
+        const el = document.querySelector(selector);
+        if (el) el.setAttribute('content', value);
+      };
+      document.title = seoTitle;
+      setMeta('meta[name="description"]', seoDesc);
+      setMeta('meta[property="og:title"]', seoTitle);
+      setMeta('meta[property="og:description"]', seoDesc);
+      setMeta('meta[property="og:url"]', pageUrl);
+      if (product.mainImage) {
+        setMeta('meta[property="og:image"]', new URL(product.mainImage, window.location.href).href);
+        setMeta('meta[property="og:image:alt"]', productImageAlt(product, 0));
+        document.querySelectorAll('meta[property="og:image:width"], meta[property="og:image:height"]').forEach(el => el.remove());
+      }
+      document.getElementById('canonical-link').setAttribute('href', pageUrl);
+
+      const ld = document.createElement('script');
+      ld.type = 'application/ld+json';
+      ld.textContent = JSON.stringify(productJsonLd(product, pageUrl)).replace(/</g, '\\u003c');
+      document.head.appendChild(ld);
+
       document.getElementById('breadcrumb-name').textContent = product.name;
       document.getElementById('product-cat').textContent = product.category;
       document.getElementById('product-name').textContent = product.name;
@@ -427,11 +463,11 @@
       /* Main image */
       const mainImg = document.getElementById('main-img');
       mainImg.src = product.mainImage;
-      mainImg.alt = product.name;
+      mainImg.alt = productImageAlt(product, 0);
 
-      const updateMainImage = (src, altSuffix = '') => {
+      const updateMainImage = (src, index) => {
         mainImg.src = src;
-        mainImg.alt = altSuffix ? `${product.name} — ${altSuffix}` : product.name;
+        mainImg.alt = productImageAlt(product, index);
         document.querySelectorAll('.thumb').forEach((thumb, index) => {
           const thumbImg = thumb.querySelector('img');
           thumb.classList.toggle('active', thumbImg && thumbImg.getAttribute('src') === src);
@@ -443,9 +479,9 @@
       (product.images || [product.mainImage]).forEach((img, i) => {
         const div = document.createElement('div');
         div.className = `thumb ${i === 0 ? 'active' : ''}`;
-        div.innerHTML = `<img src="${img}" alt="${product.name} ${i+1}">`;
+        div.innerHTML = `<img src="${img}" alt="${escapeAttr(productImageAlt(product, i))}">`;
         div.addEventListener('click', () => {
-          updateMainImage(img);
+          updateMainImage(img, i);
         });
         thumbsEl.appendChild(div);
       });
@@ -464,7 +500,7 @@
           const variantImage = Array.isArray(product.images) && product.images[i]
             ? product.images[i]
             : product.mainImage;
-          updateMainImage(variantImage, v);
+          updateMainImage(variantImage, i);
         });
         variantsEl.appendChild(btn);
       });
@@ -512,7 +548,7 @@
       relatedGrid.innerHTML = related.map(p => `
         <a class="product-card" href="/product.html?slug=${p.slug}">
           <div class="product-card__img">
-            <img src="${p.mainImage}" alt="${p.name}" style="background:#fff"
+            <img src="${p.mainImage}" alt="${escapeAttr(productImageAlt(p))}" style="background:#fff"
                  onerror="this.parentElement.style.background='var(--cream-dark)';this.style.display='none'">
             ${p.badge ? `<span class="product-card__badge">${p.badge}</span>` : ''}
           </div>

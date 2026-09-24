@@ -199,7 +199,7 @@ test('happy path: generates a caption via OpenAI and saves a scheduledPost draft
     setFixedTime(FIXED_NOW_ISO); // Thursday 11:00 London — scheduled time 09:00 has passed
     const products = [
       { _id: 'prod-1', name: 'Abayo Infinity Bracelet', shortDesc: 'Pave diamonds.', imageUrl: 'https://img/1.png', images: [] },
-      { _id: 'prod-2', name: 'Abayo Rainbow Bracelet', shortDesc: 'Moissanite rainbow.', imageUrl: 'https://img/2.png', images: [] },
+      { _id: 'prod-2', name: 'Abayo Rainbow Bracelet', shortDesc: 'Moissanite rainbow.', price: 120, imageUrl: 'https://img/2.png', images: [] },
     ];
 
     let createdDoc = null;
@@ -242,6 +242,8 @@ test('happy path: generates a caption via OpenAI and saves a scheduledPost draft
       assert.match(payload.messages[0].content, /AI Marketing Assistant for SheLoveDiamonds/);
       assert.equal(payload.messages[1].role, 'user');
       assert.match(payload.messages[1].content, /Abayo Rainbow Bracelet/);
+      assert.match(payload.messages[1].content, /Price: £120\./);
+      assert.doesNotMatch(payload.messages[0].content, /£\d/, 'system prompt must not hard-code prices');
 
       assert.ok(createdDoc, 'expected a Sanity scheduledPost document to be created');
       assert.equal(createdDoc._type, 'scheduledPost');

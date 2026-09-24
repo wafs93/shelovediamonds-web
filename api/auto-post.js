@@ -26,11 +26,15 @@ const BRAND_SYSTEM_PROMPT = `You are the AI Marketing Assistant for SheLoveDiamo
 
 Brand voice: elegant, aspirational, warm, confident. Never generic. Never filler.
 
-Products: Abayo Infinity Bracelet (£350, pavé lab-grown diamonds, 18K gold plated, Rose/White/Yellow Gold), Abayo Infinity Rainbow Bracelet (£120, multicolour Moissanite, 3 gold tones), Personalised Name Bracelet (£195, diamond letters, made to order, Rose/White Gold).
+Products: Abayo Infinity Bracelet (pavé lab-grown diamonds, 18K gold plated, Rose/White/Yellow Gold), Abayo Infinity Rainbow Bracelet (multicolour Moissanite, 3 gold tones), Personalised Name Bracelet (diamond letters, made to order, Rose/White Gold).
+
+Prices: only quote a price that is given to you with the live product data. Never guess a price or reuse one from memory.
 
 Target audience: women aged 25–50 who appreciate fine jewellery; gift-buyers (partners, parents).
 
-Key phrases Morayo uses: "women who know their worth", "from the mines of Sierra Leone", "pieces she earned", "built for her".
+Key phrases Morayo uses: "women who know their worth", "from Sierra Leone heritage", "pieces she earned", "built for her".
+
+Accuracy: every diamond is lab-grown. The rainbow pieces are Moissanite — describe them only as Moissanite, never as lab-grown, lab-created or "never mined". Sierra Leone is the founder's heritage, not the source of any stone — never say or imply stones are mined in Sierra Leone, "ethically sourced" from mines, or traceable to a mine. Never claim where or how pieces are manufactured (e.g. "made in London").
 
 Always write polished luxury copy. Ready to use. Concise. No asterisks or markdown in output unless asked.`;
 
@@ -104,9 +108,13 @@ function parseHHMM(value) {
 }
 
 async function generateCaption(product) {
+  // Price comes live from Sanity; a missing or £0 price means "not set yet"
+  const price = Number(product.price) > 0
+    ? `Price: £${Number(product.price).toLocaleString('en-GB')}.`
+    : 'Do not mention a price.';
   const prompt = `Write an Instagram caption for SheLoveDiamonds. Product: ${product.name}. Description: ${
     product.shortDesc || product.fullDesc || ''
-  }. Include relevant hashtags at the end. Platform-appropriate length and tone.`;
+  }. ${price} Include relevant hashtags at the end. Platform-appropriate length and tone.`;
 
   return callOpenAI({
     apiKey: OPENAI_API_KEY,
@@ -167,7 +175,7 @@ module.exports = async (req, res) => {
     }
 
     const products = await sanityQuery(
-      `*[_type == "product"]{ _id, name, shortDesc, fullDesc, "imageUrl": mainImage.asset->url, "images": images[].asset->url }`
+      `*[_type == "product"]{ _id, name, shortDesc, fullDesc, price, "imageUrl": mainImage.asset->url, "images": images[].asset->url }`
     );
     if (!Array.isArray(products) || products.length === 0) {
       res.status(200).json({ skipped: true, reason: 'no products found in Sanity' });

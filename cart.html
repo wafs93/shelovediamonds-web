@@ -3,7 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your Bag — SheLoveDiamonds</title>
+  <title>Your Shopping Bag – Jewellery UK | SheLoveDiamonds</title>
+  <meta name="description" content="Review the pieces in your SheLoveDiamonds bag, adjust quantities and continue to secure checkout. Every piece is gift-boxed, with free UK shipping included." />
+  <meta name="robots" content="noindex, follow" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="SheLoveDiamonds" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:title" content="Your Shopping Bag – Jewellery UK | SheLoveDiamonds" />
+  <meta property="og:description" content="Review the pieces in your SheLoveDiamonds bag, adjust quantities and continue to secure checkout. Every piece is gift-boxed, with free UK shipping included." />
+  <meta property="og:url" content="https://www.shelovediamonds.co.uk/cart" />
+  <meta property="og:image" content="https://www.shelovediamonds.co.uk/images/abayo-rainbow-white.jpeg" />
+  <meta property="og:image:width" content="1248" />
+  <meta property="og:image:height" content="832" />
+  <meta property="og:image:alt" content="White gold Abayo Infinity Rainbow bangle with a multicolour Moissanite infinity symbol" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="stylesheet" href="./css/style.css?v=20260707" />
   <style>
     .cart-page {
@@ -17,6 +30,7 @@
     }
 
     .cart-page__eyebrow {
+      font-family: var(--font-sans); font-weight: 400; line-height: 1.6;
       font-size: 0.56rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
@@ -26,6 +40,8 @@
 
     .cart-page__title {
       font-family: var(--font-serif);
+      font-weight: 400;
+      line-height: 1.1;
       font-size: clamp(2rem, 3vw, 2.8rem);
       color: var(--charcoal);
       margin: 0;
@@ -44,8 +60,8 @@
 
   <section class="cart-page">
     <div class="cart-page__header">
-      <div class="cart-page__eyebrow">Your Bag</div>
-      <h1 class="cart-page__title">Beautiful pieces, ready to be worn.</h1>
+      <h1 class="cart-page__eyebrow">Your Shopping Bag</h1>
+      <p class="cart-page__title">Beautiful pieces, ready to be worn.</p>
       <p class="cart-page__sub">Review your selections, adjust quantities, and continue to checkout when you’re ready.</p>
     </div>
 
@@ -54,9 +70,9 @@
 
   <div id="footer-placeholder"></div>
 
-  <script src="./js/products.js?v=20260707"></script>
-  <script src="./js/nav.js?v=20260707"></script>
-  <script src="./js/cart.js?v=20260707"></script>
+  <script src="./js/products.js?v=20260924"></script>
+  <script src="./js/nav.js?v=20260924"></script>
+  <script src="./js/cart.js?v=20260924"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       injectNav('cart');

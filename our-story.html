@@ -3,8 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Our Story — SheLoveDiamonds</title>
-  <meta name="description" content="The story of SheLoveDiamonds and the pieces she earned." />
+  <title>Our Story: Rooted in Sierra Leone | SheLoveDiamonds</title>
+  <meta name="description" content="How the founder's Sierra Leone heritage shapes every SheLoveDiamonds design: jewellery made for the women who already know their worth, and who wear it proudly." />
+  <link rel="canonical" href="https://www.shelovediamonds.co.uk/our-story" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="SheLoveDiamonds" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:title" content="Our Story: Rooted in Sierra Leone | SheLoveDiamonds" />
+  <meta property="og:description" content="How the founder's Sierra Leone heritage shapes every SheLoveDiamonds design: jewellery made for the women who already know their worth, and who wear it proudly." />
+  <meta property="og:url" content="https://www.shelovediamonds.co.uk/our-story" />
+  <meta property="og:image" content="https://www.shelovediamonds.co.uk/images/abayo-rainbow-white.jpeg" />
+  <meta property="og:image:width" content="1248" />
+  <meta property="og:image:height" content="832" />
+  <meta property="og:image:alt" content="White gold Abayo Infinity Rainbow bangle with a multicolour Moissanite infinity symbol" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="stylesheet" href="./css/style.css?v=20260707" />
   <style>
     body { min-height: 100vh; }
@@ -16,12 +28,15 @@
       max-width: 780px;
     }
     .story-hero__eyebrow {
+      font-family: var(--font-sans); font-weight: 400; line-height: 1.6;
       font-size: 0.62rem;
       letter-spacing: 0.35em;
       text-transform: uppercase;
       color: var(--gold);
     }
     .story-hero__title {
+      font-family: var(--font-serif);
+      font-weight: 400;
       font-size: clamp(2.4rem, 5vw, 3.8rem);
       color: var(--charcoal);
       line-height: 1.1;
@@ -57,8 +72,8 @@
 
   <main class="story-shell">
     <section class="story-hero">
-      <div class="story-hero__eyebrow">The Story Behind the Brilliance</div>
-      <h1 class="story-hero__title">Pieces She <em>Earned.</em></h1>
+      <h1 class="story-hero__eyebrow">Our Story: Rooted in Sierra Leone Heritage</h1>
+      <p class="story-hero__title">Pieces She <em>Earned.</em></p>
       <p class="story-hero__text">
         SheLoveDiamonds blends Sierra Leone heritage, intentional craftsmanship, and everyday luxury.
         Every bracelet is designed to feel like a reward, a ritual, and a reminder that her value is already known.
@@ -96,9 +111,9 @@
 
   <script src="./js/sanity-config.js?v=20260720"></script>
   <script src="./js/sanity-client.js?v=20260720"></script>
-  <script src="./js/products.js?v=20260720"></script>
-  <script src="./js/nav.js?v=20260707"></script>
-  <script src="./js/cart.js?v=20260707"></script>
+  <script src="./js/products.js?v=20260924"></script>
+  <script src="./js/nav.js?v=20260924"></script>
+  <script src="./js/cart.js?v=20260924"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       injectNav('story');
@@ -110,7 +125,7 @@
         grid.innerHTML = SLD_PRODUCTS.slice(0, 3).map(p => `
           <a class="product-card" href="/product.html?slug=${p.slug}">
             <div class="product-card__img">
-              <img src="${p.mainImage}" alt="${p.name}" onerror="this.parentElement.style.background='var(--cream-deeper)'; this.style.display='none'">
+              <img src="${p.mainImage}" alt="${escapeAttr(productImageAlt(p))}" onerror="this.parentElement.style.background='var(--cream-deeper)'; this.style.display='none'">
               ${p.badge ? `<span class="product-card__badge">${p.badge}</span>` : ''}
             </div>
             <div class="product-card__body">

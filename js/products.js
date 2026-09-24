@@ -189,3 +189,91 @@ function formatPrice(price) {
     maximumFractionDigits: 0,
   });
 }
+/* ── SEO HELPERS ── */
+function escapeAttr(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function productText(p) {
+  return [p.name, p.shortDesc, p.fullDesc].concat(p.details || []).join(' ');
+}
+
+/* "Diamond" / "Moissanite" — taken from the product's own copy, never assumed */
+function productMaterial(p) {
+  const text = productText(p);
+  if (/moissanite/i.test(text)) return 'Moissanite';
+  if (/diamond/i.test(text)) return 'Diamond';
+  return '';
+}
+
+function productNoun(p) {
+  if (/bangle/i.test(productText(p)) && p.category === 'Bracelets') return 'Bangle';
+  return { Bracelets: 'Bracelet', Personalised: 'Bracelet', Cufflinks: 'Cufflinks', Earrings: 'Earrings' }[p.category] || 'Jewellery';
+}
+
+/* Alt text for image `index` (images[i] shows variants[i], matching product.html) */
+function productImageAlt(p, index = 0) {
+  const variant = p.variants && p.variants[index] && p.variants[index] !== 'Default' ? p.variants[index] : '';
+  const sentences = (p.shortDesc || '').split('.').map(s => s.trim()).filter(Boolean);
+  const summary = [];
+  for (const s of sentences) {
+    summary.push(s.charAt(0).toLowerCase() + s.slice(1));
+    if (summary.join(', ').length >= 25) break;
+  }
+  let alt = variant ? `${p.name} in ${variant}` : p.name;
+  if (summary.length) alt += ` – ${summary.join(', ')}`;
+  return alt;
+}
+
+function productSeoTitle(p) {
+  const brand = ' | SheLoveDiamonds';
+  const descriptor = `${productMaterial(p)} ${productNoun(p)}`.trim();
+  const candidates = [
+    `${p.name} – ${descriptor} UK${brand}`,
+    `${p.name} – ${descriptor}${brand}`,
+  ];
+  return candidates.find(t => t.length <= 60) || `${p.name}${brand}`;
+}
+
+function productSeoDescription(p) {
+  const base = `${p.name}: ${p.shortDesc}`.replace(/\s+/g, ' ').trim();
+  const candidates = [
+    `${base} Gift-boxed, with free UK shipping from SheLoveDiamonds.`,
+    `${base} Free UK shipping.`,
+    base,
+  ];
+  const desc = candidates.find(d => d.length <= 160);
+  return desc || base.slice(0, 157).replace(/\s+\S*$/, '') + '…';
+}
+
+function productJsonLd(p, pageUrl) {
+  const images = (p.images || [p.mainImage])
+    .filter(Boolean)
+    .map(src => new URL(src, window.location.href).href);
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: p.name,
+    image: images,
+    description: (p.fullDesc || p.shortDesc || '').replace(/\s+/g, ' ').trim(),
+    sku: p.id,
+    category: p.category,
+    brand: { '@type': 'Brand', name: 'SheLoveDiamonds' },
+  };
+  // A £0 price means "not yet priced" in Sanity; an Offer at £0 would be wrong
+  if (p.price > 0) {
+    data.offers = {
+      '@type': 'Offer',
+      url: pageUrl,
+      priceCurrency: 'GBP',
+      price: Number(p.price).toFixed(2),
+      availability: p.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      itemCondition: 'https://schema.org/NewCondition',
+    };
+  }
+  return data;
+}

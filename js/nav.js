@@ -127,8 +127,8 @@ function injectFooter() {
                onerror="this.style.display='none'">
           <div class="footer__brand-name">SheLoveDiamonds</div>
           <p class="footer__brand-desc">
-            From the mines of Sierra Leone to the hands of women who know their worth.
-            Handcrafted diamond jewellery. Made with intention.
+            From Sierra Leone heritage to the hands of women who know their worth.
+            Handcrafted lab-grown diamond jewellery. Made with intention.
           </p>
           <div class="footer__social">
             <a href="${SLD_CONFIG.instagram}" target="_blank" aria-label="Instagram">

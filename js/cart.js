@@ -40,7 +40,7 @@ function renderCartPage(containerId) {
         ${cart.map(item => `
           <div class="cart-item" data-key="${item.key}">
             <div class="cart-item__info">
-              <img src="${item.image}" alt="${item.name}"
+              <img src="${item.image}" alt="${`${item.name} – ${item.variant}`.replace(/"/g, '&quot;')}"
                    onerror="this.style.display='none'">
               <div>
                 <div class="cart-item__name">${item.name}</div>
