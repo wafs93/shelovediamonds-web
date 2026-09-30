@@ -14,6 +14,13 @@ export const productType = defineType({
     defineField({name: 'shortDesc', title: 'Short Description', type: 'text', rows: 3}),
     defineField({name: 'fullDesc', title: 'Full Description', type: 'text', rows: 6}),
     defineField({name: 'variants', title: 'Variants', type: 'array', of: [{type: 'string'}]}),
+    defineField({
+      name: 'sizes',
+      title: 'Sizes',
+      type: 'array',
+      of: [{type: 'string'}],
+      description: 'Optional, e.g. 15cm, 16cm, 17cm. Leave empty for pieces without sizing (earrings, necklaces) and no size selector will show.'
+    }),
     defineField({name: 'mainImage', title: 'Main Image', type: 'image', options: {hotspot: true}}),
     defineField({name: 'images', title: 'Images', type: 'array', of: [{type: 'image', options: {hotspot: true}}]}),
     defineField({name: 'details', title: 'Details', type: 'array', of: [{type: 'string'}]}),

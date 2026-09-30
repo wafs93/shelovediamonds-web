@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="832" />
   <meta property="og:image:alt" content="White gold Abayo Infinity Rainbow bangle with a multicolour Moissanite infinity symbol" />
   <meta name="twitter:card" content="summary_large_image" />
-  <link rel="stylesheet" href="./css/style.css?v=20260707" />
+  <link rel="stylesheet" href="./css/style.css?v=20260929" />
   <style>
     /* ── HERO ── */
     .hero {
@@ -456,7 +456,7 @@
       <div class="hero__img-overlay"></div>
       <div class="hero__badge">
         <div class="hero__badge-label">Bestseller</div>
-        <div class="hero__badge-value">Abayo Infinity Bracelet</div>
+        <div class="hero__badge-value">Abayo Infinity Bangle</div>
       </div>
     </div>
   </section>
@@ -632,8 +632,8 @@
   <div id="footer-placeholder"></div>
 
   <script src="./js/sanity-config.js?v=20260720"></script>
-  <script src="./js/sanity-client.js?v=20260720"></script>
-  <script src="./js/products.js?v=20260924"></script>
+  <script src="./js/sanity-client.js?v=20260930"></script>
+  <script src="./js/products.js?v=20260930"></script>
   <script src="./js/nav.js?v=20260924"></script>
   <script src="./js/cart.js?v=20260924"></script>
   <script>
@@ -649,7 +649,7 @@
         grid.innerHTML = SLD_PRODUCTS.map(p => `
           <a class="product-card" href="/product.html?slug=${p.slug}">
             <div class="product-card__img" style="background:#F0EBE3">
-              <img src="${p.mainImage}" alt="${escapeAttr(productImageAlt(p))}" style="width:100%;height:100%;object-fit:contain;object-position:center;background:#F0EBE3;padding:24px"
+              <img src="${p.mainImage}" alt="${escapeAttr(productImageAlt(p))}"
                    onerror="this.parentElement.style.background='var(--cream-deeper)'; this.style.display='none'">
               ${p.badge ? `<span class="product-card__badge">${p.badge}</span>` : ''}
             </div>

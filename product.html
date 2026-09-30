@@ -17,7 +17,7 @@
   <meta property="og:image:height" content="832" />
   <meta property="og:image:alt" content="White gold Abayo Infinity Rainbow bangle with a multicolour Moissanite infinity symbol" />
   <meta name="twitter:card" content="summary_large_image" />
-  <link rel="stylesheet" href="./css/style.css?v=20260707" />
+  <link rel="stylesheet" href="./css/style.css?v=20260929" />
   <style>
     .product-page {
       padding: 100px var(--section-pad) 80px;
@@ -61,8 +61,8 @@
     .product-gallery__main img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      padding: 32px;
+      object-fit: cover;
+      object-position: center;
       transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
       transform-origin: center;
     }
@@ -94,8 +94,8 @@
     .thumb img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      padding: 8px;
+      object-fit: cover;
+      object-position: center;
     }
 
     /* Info */
@@ -169,6 +169,36 @@
 
     .variant-btn:hover { border-color: var(--charcoal); color: var(--charcoal); }
     .variant-btn.active { background: var(--charcoal); border-color: var(--charcoal); color: var(--cream); }
+
+    /* Size selector — only shown for products with sizes set */
+    .size-field {
+      margin-bottom: 32px;
+      display: none;
+    }
+
+    .size-field.show { display: block; }
+
+    .size-select {
+      width: 100%;
+      max-width: 280px;
+      padding: 14px 44px 14px 16px;
+      border: 1px solid var(--border-soft);
+      border-radius: 0;
+      background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%232C2420' stroke-width='1.2'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 16px center;
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--charcoal);
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.25s;
+    }
+
+    .size-select:hover { border-color: var(--charcoal); }
+    .size-select:focus { border-color: var(--gold); }
+    .size-select.error { border-color: #B3261E; }
 
     /* Personalisation field */
     .personalised-field {
@@ -353,6 +383,14 @@
         <div class="variants-label" id="variants-label">Select Gold Tone</div>
         <div class="variants" id="variants"></div>
 
+        <!-- Size -->
+        <div class="size-field" id="size-field">
+          <label class="variants-label" for="size-select" style="display:block">Select Size</label>
+          <select class="size-select" id="size-select">
+            <option value="">Choose a size</option>
+          </select>
+        </div>
+
         <!-- Personalisation -->
         <div class="personalised-field" id="personalised-field">
           <label class="personalised-label" for="personalised-name">Name to engrave</label>
@@ -406,8 +444,8 @@
   <div id="footer-placeholder"></div>
 
   <script src="./js/sanity-config.js?v=20260720"></script>
-  <script src="./js/sanity-client.js?v=20260720"></script>
-  <script src="./js/products.js?v=20260924"></script>
+  <script src="./js/sanity-client.js?v=20260930"></script>
+  <script src="./js/products.js?v=20260930"></script>
   <script src="./js/nav.js?v=20260924"></script>
   <script src="./js/cart.js?v=20260924"></script>
   <script>
@@ -505,6 +543,35 @@
         variantsEl.appendChild(btn);
       });
 
+      /* Sizes */
+      let selectedSize = '';
+      const hasSizes = Array.isArray(product.sizes) && product.sizes.length > 0;
+      const sizeSelect = document.getElementById('size-select');
+      if (hasSizes) {
+        product.sizes.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s;
+          opt.textContent = s;
+          sizeSelect.appendChild(opt);
+        });
+        if (product.sizes.length === 1) {
+          sizeSelect.value = selectedSize = product.sizes[0];
+        }
+        sizeSelect.addEventListener('change', () => {
+          selectedSize = sizeSelect.value;
+          sizeSelect.classList.remove('error');
+        });
+        document.getElementById('size-field').classList.add('show');
+      }
+
+      const requireSize = () => {
+        if (!hasSizes || selectedSize) return true;
+        showToast('Please select a size');
+        sizeSelect.classList.add('error');
+        sizeSelect.focus();
+        return false;
+      };
+
       /* Personalised field */
       if (product.isPersonalised) {
         document.getElementById('personalised-field').classList.add('show');
@@ -518,28 +585,33 @@
         detailsList.appendChild(li);
       });
 
-      /* Add to cart */
-      window.handleAddToCart = function() {
+      /* Add to cart / Buy now — both go through the bag so gold tone, size
+         and engraving travel with the order */
+      const addSelectionToBag = () => {
+        if (!requireSize()) return false;
         const nameInput = document.getElementById('personalised-name');
         const nameVal = nameInput ? nameInput.value.trim() : '';
         if (product.isPersonalised && !nameVal) {
           showToast('Please enter a name to engrave');
           nameInput.focus();
-          return;
+          return false;
         }
-        const variantLabel = product.isPersonalised && nameVal
-          ? `${selectedVariant} — "${nameVal}"`
+        const optionLabel = selectedSize
+          ? [selectedVariant !== 'Default' && selectedVariant, selectedSize].filter(Boolean).join(' · ')
           : selectedVariant;
+        const variantLabel = product.isPersonalised && nameVal
+          ? `${optionLabel} — "${nameVal}"`
+          : optionLabel;
         addToCart(product, variantLabel);
-        window.location.href = '/cart.html';
+        return true;
+      };
+
+      window.handleAddToCart = function() {
+        if (addSelectionToBag()) window.location.href = '/cart.html';
       };
 
       window.handleBuyNow = function() {
-        if (product.stripeLink) {
-          window.open(product.stripeLink, '_blank', 'noopener,noreferrer');
-        } else {
-          showToast('Stripe payment is not available for this product yet.');
-        }
+        if (addSelectionToBag()) window.location.href = '/checkout.html';
       };
 
       /* Related products */
