@@ -28,7 +28,6 @@ function buildSanityProductsQuery() {
     "mainImage": mainImage.asset->url,
     "images": images[].asset->url,
     details,
-    shipping,
     inStock,
     isPersonalised,
     stripeLink
@@ -64,7 +63,8 @@ async function fetchSanityProducts() {
       slug: item.slug || '',
       category: item.category || 'Uncategorized',
       badge: item.badge || '',
-      price: Number(item.price || 0),
+      // Left as-is when missing so isProductSoldOut() can flag it
+      price: item.price == null ? null : Number(item.price),
       shortDesc: item.shortDesc || '',
       fullDesc: item.fullDesc || '',
       variants: Array.isArray(item.variants) && item.variants.length ? item.variants : ['Default'],
@@ -72,7 +72,6 @@ async function fetchSanityProducts() {
       mainImage: item.mainImage || '',
       images: Array.isArray(item.images) && item.images.length ? item.images : [item.mainImage || ''],
       details: Array.isArray(item.details) ? item.details : [],
-      shipping: item.shipping || 'Free UK shipping. Worldwide delivery available.',
       inStock: typeof item.inStock === 'boolean' ? item.inStock : true,
       isPersonalised: Boolean(item.isPersonalised),
       stripeLink: item.stripeLink || '',

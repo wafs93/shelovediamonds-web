@@ -171,7 +171,7 @@ function injectFooter() {
           <ul>
             <li><a href="https://wa.me/${SLD_CONFIG.whatsapp}" target="_blank">WhatsApp Us</a></li>
             <li><a href="mailto:${SLD_CONFIG.email}">Email Us</a></li>
-            <li><a href="#">Shipping Info</a></li>
+            <li><a href="#">Delivery Info</a></li>
             <li><a href="#">Returns</a></li>
           </ul>
         </div>
@@ -221,7 +221,33 @@ function saveCart(cart) {
   updateCartCount();
 }
 
+/* Sold out check shared with products.js; a bag item also counts as
+   sold out if the price saved with it is unusable */
+function isBagItemSoldOut(item) {
+  if (!hasValidPrice(item)) return true;
+  const product = SLD_PRODUCTS.find(p => p.id === item.id);
+  return Boolean(product && isProductSoldOut(product));
+}
+
+/* Drops sold out pieces from a saved bag; returns the removed items */
+function pruneSoldOutFromCart() {
+  const cart = getCart();
+  const removed = cart.filter(isBagItemSoldOut);
+  if (removed.length) {
+    saveCart(cart.filter(i => !removed.includes(i)));
+    const names = [...new Set(removed.map(i => i.name))].join(', ');
+    showToast(`${names} ${removed.length > 1 ? 'are' : 'is'} sold out and has been removed from your bag`);
+  }
+  return removed;
+}
+
+/* Returns false (and adds nothing) for a sold out piece */
 function addToCart(product, variant, quantity = 1) {
+  if (isProductSoldOut(product)) {
+    showToast(`${product.name} is sold out`);
+    return false;
+  }
+
   const cart = getCart();
   const key = `${product.id}-${variant}`;
   const existing = cart.find(i => i.key === key);
@@ -242,6 +268,7 @@ function addToCart(product, variant, quantity = 1) {
 
   saveCart(cart);
   showToast(`${product.name} added to bag`);
+  return true;
 }
 
 function updateCartCount() {

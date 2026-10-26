@@ -66,7 +66,7 @@ function renderCartPage(containerId) {
           <span>${formatPrice(subtotal)}</span>
         </div>
         <div class="cart-summary__row">
-          <span>Shipping</span>
+          <span>Delivery</span>
           <span style="color:var(--gold)">Free</span>
         </div>
         <div class="cart-summary__row cart-summary__total">
@@ -80,7 +80,7 @@ function renderCartPage(containerId) {
           Continue Shopping
         </a>
         <div class="cart-summary__note">
-          Free UK shipping on all orders. Worldwide delivery available.
+          ${SLD_DELIVERY.uk} on every order. ${SLD_DELIVERY.worldwide}.
         </div>
       </div>
     </div>`;
@@ -90,6 +90,11 @@ function changeQty(key, delta) {
   const cart = getCart();
   const item = cart.find(i => i.key === key);
   if (!item) return;
+  if (delta > 0 && isBagItemSoldOut(item)) {
+    pruneSoldOutFromCart();
+    renderCartPage('cart-container');
+    return;
+  }
   item.quantity += delta;
   if (item.quantity <= 0) {
     const idx = cart.indexOf(item);

@@ -3,6 +3,15 @@
   Uses Sanity as primary source with local fallback
   ============================================ */
 
+/* ── DELIVERY ──
+   The one place delivery wording lives. UK standard delivery is free on
+   every order, with no minimum spend. No international rate is published. */
+const SLD_DELIVERY = {
+  uk: 'Free UK standard delivery',
+  worldwide: 'Worldwide delivery available',
+};
+const SLD_DELIVERY_LINE = `${SLD_DELIVERY.uk} · ${SLD_DELIVERY.worldwide}`;
+
 const SLD_PRODUCTS_FALLBACK = [
   {
     id: "abayo-infinity",
@@ -29,7 +38,6 @@ const SLD_PRODUCTS_FALLBACK = [
       "Available in 3 gold tones",
       "Gift box included",
     ],
-    shipping: "Free UK shipping. Worldwide delivery available.",
     inStock: true,
     stripeLink: "https://buy.stripe.com/14A28t7849m92hX3secEw00",
   },
@@ -58,7 +66,6 @@ const SLD_PRODUCTS_FALLBACK = [
       "Available in 3 gold tones",
       "Gift box included",
     ],
-    shipping: "Free UK shipping. Worldwide delivery available.",
     inStock: true,
     stripeLink: "https://buy.stripe.com/28E4gB2RO69X9Kp2oacEw01",
   },
@@ -89,7 +96,6 @@ const SLD_PRODUCTS_FALLBACK = [
       "Allow 5–7 working days",
       "Gift box included",
     ],
-    shipping: "Free UK shipping. Worldwide delivery available.",
     inStock: true,
     isPersonalised: true,
     stripeLink: "https://buy.stripe.com/5kQkFeAwaqdf4J7IucEw02",
@@ -114,7 +120,6 @@ const SLD_PRODUCTS_FALLBACK = [
       "Polished gold plating",
       "Gift box included"
     ],
-    shipping: "Free UK shipping. Worldwide delivery available.",
     inStock: true,
     isPersonalised: true,
     stripeLink: ""
@@ -125,7 +130,7 @@ const SLD_PRODUCTS_FALLBACK = [
     slug: "abayo-rainbow-earrings",
     category: "Earrings",
     badge: "New",
-    price: 0,
+    price: null, // no price yet, so it shows as Sold out
     shortDesc: "Gold plated stainless steel with multicoloured Moissanite. Iconic infinity symbol stud earrings.",
     fullDesc: "Add a burst of vibrant color and timeless symbolism to your look. These stunning stud earrings feature the iconic infinity symbol fully pavé-set with a dazzling spectrum of multicolored Moissanite stones, creating a joyful rainbow effect that sparkles from every angle.",
     variants: ["Rose Gold"],
@@ -140,7 +145,6 @@ const SLD_PRODUCTS_FALLBACK = [
       "Polished gold plating",
       "Gift box included"
     ],
-    shipping: "Free UK shipping. Worldwide delivery available.",
     inStock: true,
     stripeLink: ""
   },
@@ -176,6 +180,38 @@ function getProductBySlug(slug) {
 function getProductsByCategory(cat) {
   if (!cat || cat === 'all') return SLD_PRODUCTS;
   return SLD_PRODUCTS.filter(p => p.category === cat);
+}
+
+/* Sold out = no usable price (missing, zero, not a number) or In Stock off */
+function hasValidPrice(p) {
+  if (!p || (typeof p.price !== 'number' && typeof p.price !== 'string')) return false;
+  const price = Number(p.price);
+  return p.price !== '' && Number.isFinite(price) && price > 0;
+}
+
+function isProductSoldOut(p) {
+  return !hasValidPrice(p) || p.inStock === false;
+}
+
+/* Grid badge: "Sold out" replaces New / Bestseller etc. */
+function productBadge(p) {
+  return isProductSoldOut(p) ? 'Sold out' : (p.badge || '');
+}
+
+/* Price text for cards and the product page; empty when sold out (never £0) */
+function productPriceLabel(p) {
+  return isProductSoldOut(p) ? '' : formatPrice(p.price);
+}
+
+/* Sort by price (direction 'asc' | 'desc'); sold out pieces always go last */
+function sortProductsByPrice(products, direction = 'asc') {
+  const sign = direction === 'desc' ? -1 : 1;
+  return products.slice().sort((a, b) => {
+    const aOut = isProductSoldOut(a);
+    const bOut = isProductSoldOut(b);
+    if (aOut || bOut) return aOut === bOut ? 0 : aOut ? 1 : -1;
+    return sign * (Number(a.price) - Number(b.price));
+  });
 }
 
 function formatPrice(price) {
@@ -237,8 +273,8 @@ function productSeoTitle(p) {
 function productSeoDescription(p) {
   const base = `${p.name}: ${p.shortDesc}`.replace(/\s+/g, ' ').trim();
   const candidates = [
-    `${base} Gift-boxed, with free UK shipping from SheLoveDiamonds.`,
-    `${base} Free UK shipping.`,
+    `${base} Gift-boxed, with free UK standard delivery from SheLoveDiamonds.`,
+    `${base} Free UK standard delivery.`,
     base,
   ];
   const desc = candidates.find(d => d.length <= 160);
@@ -259,16 +295,19 @@ function productJsonLd(p, pageUrl) {
     category: p.category,
     brand: { '@type': 'Brand', name: 'SheLoveDiamonds' },
   };
-  // A £0 price means "not yet priced" in Sanity; an Offer at £0 would be wrong
-  if (p.price > 0) {
-    data.offers = {
-      '@type': 'Offer',
-      url: pageUrl,
-      priceCurrency: 'GBP',
-      price: Number(p.price).toFixed(2),
-      availability: p.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      itemCondition: 'https://schema.org/NewCondition',
-    };
+  // Sold out: no price in the Offer (a £0 price would be wrong), just availability
+  const offer = {
+    '@type': 'Offer',
+    url: pageUrl,
+    availability: 'https://schema.org/InStock',
+    itemCondition: 'https://schema.org/NewCondition',
+  };
+  if (isProductSoldOut(p)) {
+    offer.availability = 'https://schema.org/OutOfStock';
+  } else {
+    offer.priceCurrency = 'GBP';
+    offer.price = Number(p.price).toFixed(2);
   }
+  data.offers = offer;
   return data;
 }

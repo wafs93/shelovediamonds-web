@@ -18,7 +18,6 @@ const products = [
     mainImage: 'images/abayo-rose.png',
     images: ['images/abayo-rose.png', 'images/abayo-white.png', 'images/abayo-yellow.png'],
     details: ['18K gold plated 925 sterling silver', 'Pave lab-grown diamonds', 'Infinity symbol design', 'Secure bangle clasp', 'Available in 3 gold tones', 'Gift box included'],
-    shipping: 'Free UK shipping. Worldwide delivery available.',
     inStock: true,
     isPersonalised: false,
     stripeLink: 'https://buy.stripe.com/14A28t7849m92hX3secEw00'
@@ -36,7 +35,6 @@ const products = [
     mainImage: 'images/abayo-rainbow-rose.jpeg',
     images: ['images/abayo-rainbow-rose.jpeg', 'images/abayo-rainbow-white.jpeg', 'images/abayo-rainbow-yellow.jpeg'],
     details: ['18K gold plated 925 sterling silver', 'Multicolour Moissanite stones', 'Rainbow infinity design', 'Secure bangle clasp', 'Available in 3 gold tones', 'Gift box included'],
-    shipping: 'Free UK shipping. Worldwide delivery available.',
     inStock: true,
     isPersonalised: false,
     stripeLink: 'https://buy.stripe.com/28E4gB2RO69X9Kp2oacEw01'
@@ -54,7 +52,6 @@ const products = [
     mainImage: 'images/name-bracelet.png',
     images: ['images/name-bracelet.png'],
     details: ['18K gold plated 925 sterling silver', 'Diamond-encrusted letter setting', 'Made to order — your name', 'Rose Gold or White Gold', 'Allow 5–7 working days', 'Gift box included'],
-    shipping: 'Free UK shipping. Worldwide delivery available.',
     inStock: true,
     isPersonalised: true,
     stripeLink: 'https://buy.stripe.com/5kQkFeAwaqdf4J7IucEw02'
@@ -72,7 +69,6 @@ const products = [
     mainImage: 'images/cufflinks-silver.jpeg',
     images: ['images/cufflinks-silver.jpeg', 'images/cufflinks-variants.jpeg'],
     details: ['Stainless steel plated in gold', 'High-quality lab-grown diamonds in full pave setting', 'Round face with customizable initial', 'Polished gold plating', 'Gift box included'],
-    shipping: 'Free UK shipping. Worldwide delivery available.',
     inStock: true,
     isPersonalised: true,
     stripeLink: ''
@@ -90,7 +86,6 @@ const products = [
     mainImage: 'images/earrings-rainbow.jpeg',
     images: ['images/earrings-rainbow.jpeg'],
     details: ['Stainless steel plated in gold', 'Multicolored Moissanite in full rainbow pave setting', 'Iconic infinity symbol design', 'Modern stud with secure post backing', 'Polished gold plating', 'Gift box included'],
-    shipping: 'Free UK shipping. Worldwide delivery available.',
     inStock: true,
     isPersonalised: false,
     stripeLink: ''
@@ -176,7 +171,6 @@ async function run() {
         },
       })),
       details: product.details,
-      shipping: product.shipping,
       inStock: product.inStock,
       isPersonalised: product.isPersonalised,
       stripeLink: product.stripeLink,

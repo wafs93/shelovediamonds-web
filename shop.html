@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shop Diamond Bangles &amp; Cufflinks UK | SheLoveDiamonds</title>
-  <meta name="description" content="Shop lab-grown diamond bangles, personalised name bracelets, diamond cufflinks and rainbow infinity earrings. Every piece gift-boxed, with free UK shipping." />
+  <meta name="description" content="Shop lab-grown diamond bangles, personalised name bracelets, diamond cufflinks and rainbow infinity earrings. Gift-boxed, with free UK standard delivery." />
   <link rel="canonical" href="https://www.shelovediamonds.co.uk/shop" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="SheLoveDiamonds" />
   <meta property="og:locale" content="en_GB" />
   <meta property="og:title" content="Shop Diamond Bangles &amp; Cufflinks UK | SheLoveDiamonds" />
-  <meta property="og:description" content="Shop lab-grown diamond bangles, personalised name bracelets, diamond cufflinks and rainbow infinity earrings. Every piece gift-boxed, with free UK shipping." />
+  <meta property="og:description" content="Shop lab-grown diamond bangles, personalised name bracelets, diamond cufflinks and rainbow infinity earrings. Gift-boxed, with free UK standard delivery." />
   <meta property="og:url" content="https://www.shelovediamonds.co.uk/shop" />
   <meta property="og:image" content="https://www.shelovediamonds.co.uk/images/abayo-rainbow-white.jpeg" />
   <meta property="og:image:width" content="1248" />
@@ -96,10 +96,10 @@
   <div id="footer-placeholder"></div>
 
   <script src="js/sanity-config.js?v=20260720"></script>
-  <script src="js/sanity-client.js?v=20260930"></script>
-  <script src="js/products.js?v=20260930"></script>
-  <script src="js/nav.js?v=20260924"></script>
-  <script src="js/cart.js?v=20260924"></script>
+  <script src="js/sanity-client.js?v=20261026"></script>
+  <script src="js/products.js?v=20261026"></script>
+  <script src="js/nav.js?v=20261026"></script>
+  <script src="js/cart.js?v=20261026"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async function() {
       injectNav('shop');
@@ -112,14 +112,10 @@
       function getFiltered() {
         var p = SLD_PRODUCTS.slice();
         if (activeFilter !== 'all') p = p.filter(function(x){ return x.category === activeFilter; });
-        if (activeSort === 'price-asc') p.sort(function(a,b){ return a.price - b.price; });
-        if (activeSort === 'price-desc') p.sort(function(a,b){ return b.price - a.price; });
+        if (activeSort === 'price-asc') p = sortProductsByPrice(p, 'asc');
+        if (activeSort === 'price-desc') p = sortProductsByPrice(p, 'desc');
         if (activeSort === 'name') p.sort(function(a,b){ return a.name.localeCompare(b.name); });
         return p;
-      }
-
-      function formatPriceFn(price) {
-        return '£' + Number(price).toLocaleString('en-GB');
       }
 
       function renderGrid() {
@@ -136,7 +132,7 @@
           return '<a class="product-card" href="product.html?slug=' + p.slug + '">' +
             '<div class="product-card__img" style="background:#FAF7F2">' +
               '<img src="' + p.mainImage + '" alt="' + escapeAttr(productImageAlt(p)) + '" onerror="this.style.display=\'none\'">' +
-              (p.badge ? '<span class="product-card__badge">' + p.badge + '</span>' : '') +
+              (productBadge(p) ? '<span class="product-card__badge">' + productBadge(p) + '</span>' : '') +
             '</div>' +
             '<div class="product-card__body">' +
               '<div class="product-card__cat">' + p.category + '</div>' +
@@ -144,7 +140,7 @@
               '<div class="product-card__desc">' + p.shortDesc + '</div>' +
             '</div>' +
             '<div class="product-card__footer">' +
-              '<span class="product-card__price">' + formatPriceFn(p.price) + '</span>' +
+              '<span class="product-card__price">' + productPriceLabel(p) + '</span>' +
               '<span class="product-card__cta">View Piece</span>' +
             '</div>' +
           '</a>';

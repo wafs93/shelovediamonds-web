@@ -750,8 +750,8 @@
   </div>
 
   <script src="js/sanity-config.js"></script>
-  <script src="js/sanity-client.js?v=20260930"></script>
-  <script src="js/products.js?v=20260930"></script>
+  <script src="js/sanity-client.js?v=20261026"></script>
+  <script src="js/products.js?v=20261026"></script>
   <script>
     /* ── AUTH ── */
     const PASS = 'sld2026morayo'; // Change this password!
@@ -830,6 +830,8 @@ Products: Abayo Infinity Bangle (pavé lab-grown diamonds, 18K gold plated, Rose
 
 Prices: only quote a price that is given to you with the live product data. Never guess a price or reuse one from memory.
 
+Delivery: free UK standard delivery on every order, with no minimum spend. Worldwide delivery is available. Never quote a delivery price, minimum spend or courier, and never invent an international rate.
+
 Target audience: women aged 25–50 who appreciate fine jewellery; gift-buyers (partners, parents).
 
 Key phrases Morayo uses: "women who know their worth", "from Sierra Leone heritage", "pieces she earned", "built for her".
@@ -841,7 +843,7 @@ Always write polished luxury copy. Ready to use. Concise. No asterisks or markdo
     /* Brand prompt plus the live product list, so prices always match Sanity */
     async function systemPrompt() {
       await ensureProductsLoaded();
-      const lines = SLD_PRODUCTS.map(p => `- ${p.name}: ${p.price > 0 ? formatPrice(p.price) : 'price not set, do not quote one'}`);
+      const lines = SLD_PRODUCTS.map(p => `- ${p.name}: ${isProductSoldOut(p) ? 'sold out, do not quote a price' : formatPrice(p.price)}`);
       return `${SYSTEM}\n\nLive product data (current prices):\n${lines.join('\n')}`;
     }
 

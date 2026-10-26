@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Your Shopping Bag – Jewellery UK | SheLoveDiamonds</title>
-  <meta name="description" content="Review the pieces in your SheLoveDiamonds bag, adjust quantities and continue to secure checkout. Every piece is gift-boxed, with free UK shipping included." />
+  <meta name="description" content="Review the pieces in your SheLoveDiamonds bag, adjust quantities and continue to secure checkout. Every piece gift-boxed, with free UK standard delivery." />
   <meta name="robots" content="noindex, follow" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="SheLoveDiamonds" />
   <meta property="og:locale" content="en_GB" />
   <meta property="og:title" content="Your Shopping Bag – Jewellery UK | SheLoveDiamonds" />
-  <meta property="og:description" content="Review the pieces in your SheLoveDiamonds bag, adjust quantities and continue to secure checkout. Every piece is gift-boxed, with free UK shipping included." />
+  <meta property="og:description" content="Review the pieces in your SheLoveDiamonds bag, adjust quantities and continue to secure checkout. Every piece gift-boxed, with free UK standard delivery." />
   <meta property="og:url" content="https://www.shelovediamonds.co.uk/cart" />
   <meta property="og:image" content="https://www.shelovediamonds.co.uk/images/abayo-rainbow-white.jpeg" />
   <meta property="og:image:width" content="1248" />
@@ -70,14 +70,18 @@
 
   <div id="footer-placeholder"></div>
 
-  <script src="./js/products.js?v=20260930"></script>
-  <script src="./js/nav.js?v=20260924"></script>
-  <script src="./js/cart.js?v=20260924"></script>
+  <script src="./js/sanity-config.js?v=20260720"></script>
+  <script src="./js/sanity-client.js?v=20261026"></script>
+  <script src="./js/products.js?v=20261026"></script>
+  <script src="./js/nav.js?v=20261026"></script>
+  <script src="./js/cart.js?v=20261026"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       injectNav('cart');
       injectFooter();
       renderCartPage('cart-container');
+      await ensureProductsLoaded();
+      if (pruneSoldOutFromCart().length) renderCartPage('cart-container');
     });
   </script>
 </body>

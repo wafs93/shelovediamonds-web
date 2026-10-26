@@ -10,15 +10,26 @@ export const productType = defineType({
     defineField({name: 'slug', title: 'Slug', type: 'slug', options: {source: 'name', maxLength: 96}, validation: (rule) => rule.required()}),
     defineField({name: 'category', title: 'Category', type: 'string', validation: (rule) => rule.required()}),
     defineField({name: 'badge', title: 'Badge', type: 'string'}),
-    defineField({name: 'price', title: 'Price', type: 'number', validation: (rule) => rule.required().min(0)}),
+    defineField({
+      name: 'price',
+      title: 'Price',
+      type: 'number',
+      description: 'Leave empty to show Sold out',
+      validation: (rule) => rule.min(0)
+    }),
     defineField({name: 'shortDesc', title: 'Short Description', type: 'text', rows: 3}),
     defineField({name: 'fullDesc', title: 'Full Description', type: 'text', rows: 6}),
     defineField({name: 'variants', title: 'Variants', type: 'array', of: [{type: 'string'}]}),
     defineField({name: 'mainImage', title: 'Main Image', type: 'image', options: {hotspot: true}}),
     defineField({name: 'images', title: 'Images', type: 'array', of: [{type: 'image', options: {hotspot: true}}]}),
     defineField({name: 'details', title: 'Details', type: 'array', of: [{type: 'string'}]}),
-    defineField({name: 'shipping', title: 'Shipping', type: 'string'}),
-    defineField({name: 'inStock', title: 'In Stock', type: 'boolean', initialValue: true}),
+    defineField({
+      name: 'shipping',
+      title: 'Shipping (no longer used)',
+      type: 'string',
+      description: 'Optional. Not needed on new products: every product page shows the same site-wide line, "Free UK standard delivery · Worldwide delivery available".'
+    }),
+    defineField({name: 'inStock', title: 'In Stock', type: 'boolean', initialValue: true, description: 'Turn off to show Sold out'}),
     defineField({name: 'isPersonalised', title: 'Is Personalised', type: 'boolean'}),
     defineField({name: 'stripeLink', title: 'Stripe Link', type: 'url'})
   ],

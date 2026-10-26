@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lab-Grown Diamond Bangles &amp; Jewellery | SheLoveDiamonds</title>
-  <meta name="description" content="Discover lab-grown diamond bangles, diamond cufflinks and personalised jewellery from SheLoveDiamonds, each piece gift-boxed, with free UK shipping included." />
+  <meta name="description" content="Discover lab-grown diamond bangles, diamond cufflinks and personalised jewellery from SheLoveDiamonds, each piece gift-boxed with free UK standard delivery." />
   <link rel="canonical" href="https://www.shelovediamonds.co.uk/product" id="canonical-link" />
   <meta property="og:type" content="product" />
   <meta property="og:site_name" content="SheLoveDiamonds" />
   <meta property="og:locale" content="en_GB" />
   <meta property="og:title" content="Lab-Grown Diamond Bangles &amp; Jewellery | SheLoveDiamonds" />
-  <meta property="og:description" content="Discover lab-grown diamond bangles, diamond cufflinks and personalised jewellery from SheLoveDiamonds, each piece gift-boxed, with free UK shipping included." />
+  <meta property="og:description" content="Discover lab-grown diamond bangles, diamond cufflinks and personalised jewellery from SheLoveDiamonds, each piece gift-boxed with free UK standard delivery." />
   <meta property="og:url" content="https://www.shelovediamonds.co.uk/product" />
   <meta property="og:image" content="https://www.shelovediamonds.co.uk/images/abayo-rainbow-white.jpeg" />
   <meta property="og:image:width" content="1248" />
@@ -121,6 +121,18 @@
       font-size: 1.8rem;
       color: var(--charcoal);
       margin-bottom: 8px;
+    }
+
+    .product-info__price.sold-out {
+      font-size: 1.1rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .btn-add-cart:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
     }
 
     .product-info__shipping {
@@ -376,7 +388,7 @@
         <div class="product-info__cat" id="product-cat"></div>
         <h1 class="product-info__name" id="product-name"></h1>
         <div class="product-info__price" id="product-price"></div>
-        <div class="product-info__shipping">✓ Free UK Shipping &nbsp;·&nbsp; Worldwide Delivery</div>
+        <div class="product-info__shipping" id="product-delivery"></div>
         <p class="product-info__desc" id="product-desc"></p>
 
         <!-- Variants -->
@@ -444,10 +456,10 @@
   <div id="footer-placeholder"></div>
 
   <script src="./js/sanity-config.js?v=20260720"></script>
-  <script src="./js/sanity-client.js?v=20260930"></script>
-  <script src="./js/products.js?v=20260930"></script>
-  <script src="./js/nav.js?v=20260924"></script>
-  <script src="./js/cart.js?v=20260924"></script>
+  <script src="./js/sanity-client.js?v=20261026"></script>
+  <script src="./js/products.js?v=20261026"></script>
+  <script src="./js/nav.js?v=20261026"></script>
+  <script src="./js/cart.js?v=20261026"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       injectNav('shop');
@@ -495,7 +507,18 @@
       document.getElementById('breadcrumb-name').textContent = product.name;
       document.getElementById('product-cat').textContent = product.category;
       document.getElementById('product-name').textContent = product.name;
-      document.getElementById('product-price').textContent = formatPrice(product.price);
+      const soldOut = isProductSoldOut(product);
+      const priceEl = document.getElementById('product-price');
+      priceEl.textContent = soldOut ? 'Sold out' : formatPrice(product.price);
+      priceEl.classList.toggle('sold-out', soldOut);
+      document.getElementById('product-delivery').textContent = `✓ ${SLD_DELIVERY_LINE}`;
+      if (soldOut) {
+        ['add-to-cart-btn', 'buy-now-btn'].forEach(id => {
+          const btn = document.getElementById(id);
+          btn.disabled = true;
+          btn.setAttribute('aria-disabled', 'true');
+        });
+      }
       document.getElementById('product-desc').textContent = product.shortDesc;
 
       /* Main image */
@@ -588,6 +611,7 @@
       /* Add to cart / Buy now — both go through the bag so gold tone, size
          and engraving travel with the order */
       const addSelectionToBag = () => {
+        if (soldOut) return false;
         if (!requireSize()) return false;
         const nameInput = document.getElementById('personalised-name');
         const nameVal = nameInput ? nameInput.value.trim() : '';
@@ -602,8 +626,7 @@
         const variantLabel = product.isPersonalised && nameVal
           ? `${optionLabel} — "${nameVal}"`
           : optionLabel;
-        addToCart(product, variantLabel);
-        return true;
+        return addToCart(product, variantLabel);
       };
 
       window.handleAddToCart = function() {
@@ -622,7 +645,7 @@
           <div class="product-card__img">
             <img src="${p.mainImage}" alt="${escapeAttr(productImageAlt(p))}" style="background:#fff"
                  onerror="this.parentElement.style.background='var(--cream-dark)';this.style.display='none'">
-            ${p.badge ? `<span class="product-card__badge">${p.badge}</span>` : ''}
+            ${productBadge(p) ? `<span class="product-card__badge">${productBadge(p)}</span>` : ''}
           </div>
           <div class="product-card__body">
             <div class="product-card__cat">${p.category}</div>
@@ -630,7 +653,7 @@
             <div class="product-card__desc">${p.shortDesc}</div>
           </div>
           <div class="product-card__footer">
-            <span class="product-card__price">${formatPrice(p.price)}</span>
+            <span class="product-card__price">${productPriceLabel(p)}</span>
             <span class="product-card__cta">View Piece</span>
           </div>
         </a>`).join('');

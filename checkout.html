@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Secure Checkout – Diamond Jewellery UK | SheLoveDiamonds</title>
-  <meta name="description" content="Complete your SheLoveDiamonds order securely. Lab-grown diamond bangles, cufflinks and personalised jewellery, beautifully gift-boxed with free UK shipping." />
+  <meta name="description" content="Complete your SheLoveDiamonds order securely. Lab-grown diamond bangles, cufflinks and personalised jewellery, gift-boxed with free UK standard delivery." />
   <meta name="robots" content="noindex, follow" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="SheLoveDiamonds" />
   <meta property="og:locale" content="en_GB" />
   <meta property="og:title" content="Secure Checkout – Diamond Jewellery UK | SheLoveDiamonds" />
-  <meta property="og:description" content="Complete your SheLoveDiamonds order securely. Lab-grown diamond bangles, cufflinks and personalised jewellery, beautifully gift-boxed with free UK shipping." />
+  <meta property="og:description" content="Complete your SheLoveDiamonds order securely. Lab-grown diamond bangles, cufflinks and personalised jewellery, gift-boxed with free UK standard delivery." />
   <meta property="og:url" content="https://www.shelovediamonds.co.uk/checkout" />
   <meta property="og:image" content="https://www.shelovediamonds.co.uk/images/abayo-rainbow-white.jpeg" />
   <meta property="og:image:width" content="1248" />
@@ -278,19 +278,19 @@
             </select>
           </label>
 
-          <div class="checkout-card__title" style="margin-top:12px; margin-bottom: 12px;">Shipping</div>
-          <div class="shipping-options" role="radiogroup" aria-label="Shipping options">
+          <div class="checkout-card__title" style="margin-top:12px; margin-bottom: 12px;">Delivery</div>
+          <div class="shipping-options" role="radiogroup" aria-label="Delivery options">
             <label class="shipping-option active">
               <input type="radio" name="shippingMethod" value="standard" checked />
               <span class="shipping-option__content">
-                <span class="shipping-option__title">Standard shipping (3-5 days)</span>
+                <span class="shipping-option__title">Free UK standard delivery (3-5 days)</span>
                 <span class="shipping-option__meta">Free</span>
               </span>
             </label>
             <label class="shipping-option">
               <input type="radio" name="shippingMethod" value="express" />
               <span class="shipping-option__content">
-                <span class="shipping-option__title">Express shipping (1-3 days)</span>
+                <span class="shipping-option__title">Express UK delivery (1-3 days)</span>
                 <span class="shipping-option__meta">£4.99</span>
               </span>
             </label>
@@ -304,7 +304,7 @@
             <label class="shipping-option">
               <input type="radio" name="shippingMethod" value="international" />
               <span class="shipping-option__content">
-                <span class="shipping-option__title">International shipping</span>
+                <span class="shipping-option__title">Worldwide delivery available</span>
                 <span class="shipping-option__meta">Contact us</span>
               </span>
             </label>
@@ -337,7 +337,7 @@
             <strong id="checkout-subtotal">£0</strong>
           </div>
           <div class="summary-item">
-            <span>Shipping</span>
+            <span>Delivery</span>
             <strong id="shipping-value" style="color:var(--gold)">Free</strong>
           </div>
           <div class="summary-item" style="font-family:var(--font-serif); font-size:1.02rem; color:var(--charcoal)">
@@ -358,22 +358,25 @@
   <div id="footer-placeholder"></div>
 
   <script src="./js/sanity-config.js?v=20260720"></script>
-  <script src="./js/sanity-client.js?v=20260930"></script>
-  <script src="./js/products.js?v=20260930"></script>
-  <script src="./js/nav.js?v=20260924"></script>
-  <script src="./js/cart.js?v=20260924"></script>
+  <script src="./js/sanity-client.js?v=20261026"></script>
+  <script src="./js/products.js?v=20261026"></script>
+  <script src="./js/nav.js?v=20261026"></script>
+  <script src="./js/cart.js?v=20261026"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       injectNav('checkout');
       injectFooter();
-      ensureProductsLoaded();
+      await ensureProductsLoaded();
+      pruneSoldOutFromCart();
 
-      const cart = getCart();
+      let cart = getCart();
       const container = document.getElementById('checkout-items');
       const subtotalEl = document.getElementById('checkout-subtotal');
       const totalEl = document.getElementById('checkout-total');
       const shippingValueEl = document.getElementById('shipping-value');
       const shippingInputs = Array.from(document.querySelectorAll('input[name="shippingMethod"]'));
+      /* UK standard delivery is free on every order (no minimum spend).
+         International has no published rate: it is confirmed with the customer. */
       const shippingRates = {
         standard: 0,
         express: 4.99,
@@ -469,16 +472,30 @@
 
         const name = `${firstName} ${lastName}`;
         const address = [address1, address2, `${city}, ${postcode}`, country].filter(Boolean).join(', ');
+        if (pruneSoldOutFromCart().length) {
+          cart = getCart();
+          updateCheckoutSummary();
+          alert('A piece in your bag has sold out and was removed. Please review your order.');
+          return;
+        }
+
         const cartItems = getCart();
+        if (!cartItems.length) {
+          alert('Your bag is empty.');
+          return;
+        }
         const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         const selectedShipping = document.querySelector('input[name="shippingMethod"]:checked');
-        const selectedRate = selectedShipping ? shippingRates[selectedShipping.value] : shippingRates.standard;
+        const selectedMethod = selectedShipping ? selectedShipping.value : 'standard';
+        const selectedRate = shippingRates[selectedMethod];
         const shippingCost = selectedRate === null ? null : Number(selectedRate);
-        const shippingLabel = selectedRate === null ? 'Contact us' : selectedRate === 0 ? 'Free' : formatPrice(selectedRate);
+        const shippingLabel = selectedMethod === 'standard' ? SLD_DELIVERY.uk
+          : selectedRate === null ? `${SLD_DELIVERY.worldwide} (to be confirmed)`
+          : formatPrice(selectedRate);
         const total = subtotal + (shippingCost || 0);
 
         const itemList = cartItems.map(item => `${item.name} (${item.variant}) x${item.quantity}`).join('\n');
-        const message = `🛍️ New Order from SheLoveDiamonds\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nAddress: ${address}\n\nItems:\n${itemList || 'No items selected'}\n\nShipping: ${shippingLabel}\nTotal: ${formatPrice(total)}\n\nPlease confirm and send payment details. Thank you!`;
+        const message = `🛍️ New Order from SheLoveDiamonds\n\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nAddress: ${address}\n\nItems:\n${itemList || 'No items selected'}\n\nDelivery: ${shippingLabel}\nTotal: ${formatPrice(total)}\n\nPlease confirm and send payment details. Thank you!`;
 
         const encodedMessage = encodeURIComponent(message);
         window.open(`https://wa.me/447438451109?text=${encodedMessage}`, '_blank', 'noopener,noreferrer');
