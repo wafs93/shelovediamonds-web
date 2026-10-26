@@ -180,7 +180,7 @@ test('returns 500 with a clear message when OPENAI_API_KEY is missing', async ()
     setFixedTime(FIXED_NOW_ISO);
     global.fetch = sanityQueryResponder({
       settings: { enabled: true, days: ['thursday'], time: '09:00' },
-      products: [{ _id: 'prod-1', name: 'Abayo Infinity Bracelet', shortDesc: 'Pave diamonds.', imageUrl: 'https://img/1.png' }],
+      products: [{ _id: 'prod-1', name: 'Abayo Infinity Bracelet', shortDesc: 'Pave diamonds.', price: 179, imageUrl: 'https://img/1.png' }],
     });
     try {
       const handler = loadHandler();
@@ -254,4 +254,85 @@ test('happy path: generates a caption via OpenAI and saves a scheduledPost draft
       restoreTime();
     }
   });
+});
+
+function autoPostFetch({ products, recentRefs, calls }) {
+  return async (url, opts) => {
+    if (url === 'https://api.openai.com/v1/chat/completions') {
+      calls.openai += 1;
+      return { ok: true, json: async () => ({ choices: [{ message: { content: 'Caption #SheLoveDiamonds' } }] }) };
+    }
+    if (typeof url === 'string' && url.includes('/data/mutate/')) {
+      calls.created.push(JSON.parse(opts.body).mutations[0].create);
+      return { ok: true, json: async () => ({}) };
+    }
+    return sanityQueryResponder({
+      settings: { enabled: true, days: ['thursday'], time: '09:00' },
+      products,
+      recentRefs,
+    })(url);
+  };
+}
+
+test('never picks a sold out product (no price, £0, not a number, or In Stock off), even over rotation', async () => {
+  await withEnv({ OPENAI_API_KEY: 'openai-test-key', SANITY_API_TOKEN: 'sanity-write-token', CRON_SECRET: undefined }, async () => {
+    setFixedTime(FIXED_NOW_ISO);
+    const products = [
+      { _id: 'no-price', name: 'No Price', images: [] },
+      { _id: 'zero', name: 'Zero', price: 0, inStock: true, images: [] },
+      { _id: 'nan', name: 'Not A Number', price: 'abc', images: [] },
+      { _id: 'off', name: 'Out Of Stock', price: 150, inStock: false, images: [] },
+      { _id: 'ok', name: 'Available Bangle', price: 179, inStock: true, images: [] },
+    ];
+    const calls = { openai: 0, created: [] };
+    // "ok" was used recently, but it is the only product that is not sold out
+    global.fetch = autoPostFetch({ products, recentRefs: ['ok'], calls });
+
+    try {
+      for (let run = 0; run < 10; run++) {
+        const res = makeRes();
+        await loadHandler()({ headers: {} }, res);
+        assert.equal(res.statusCode, 200);
+        assert.equal(res.body.product, 'Available Bangle');
+      }
+      assert.deepEqual([...new Set(calls.created.map((d) => d.product._ref))], ['ok']);
+    } finally {
+      restoreTime();
+    }
+  });
+});
+
+test('skips cleanly and logs why when every product is sold out', async () => {
+  await withEnv({ OPENAI_API_KEY: 'openai-test-key', SANITY_API_TOKEN: 'sanity-write-token', CRON_SECRET: undefined }, async () => {
+    setFixedTime(FIXED_NOW_ISO);
+    const products = [
+      { _id: 'zero', name: 'Zero', price: 0, images: [] },
+      { _id: 'off', name: 'Out Of Stock', price: 150, inStock: false, images: [] },
+    ];
+    const calls = { openai: 0, created: [] };
+    global.fetch = autoPostFetch({ products, recentRefs: [], calls });
+
+    const logs = [];
+    const realLog = console.log;
+    console.log = (...args) => logs.push(args.join(' '));
+    try {
+      const res = makeRes();
+      await loadHandler()({ headers: {} }, res);
+      assert.equal(res.statusCode, 200);
+      assert.deepEqual(res.body, { skipped: true, reason: 'every product is sold out' });
+      assert.equal(calls.openai, 0, 'no caption is generated');
+      assert.equal(calls.created.length, 0, 'no draft is saved');
+      assert.ok(logs.some((l) => /Auto-post skipped: every product is sold out/.test(l)));
+    } finally {
+      console.log = realLog;
+      restoreTime();
+    }
+  });
+});
+
+test('auto-post uses the storefront sold out rule from js/products.js, not its own copy', () => {
+  const src = require('node:fs').readFileSync(require.resolve('../api/auto-post.js'), 'utf8');
+  assert.match(src, /require\('\.\.\/js\/products\.js'\)/);
+  assert.doesNotMatch(src, /function (isProductSoldOut|hasValidPrice)/);
+  assert.equal(require('../js/products.js').isProductSoldOut({ price: 0 }), true);
 });

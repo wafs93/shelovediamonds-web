@@ -287,6 +287,9 @@
                 <span class="shipping-option__meta">Free</span>
               </span>
             </label>
+            <!-- HIDDEN: Express and Same Day delivery are hidden until Morayo confirms
+                 their prices and couriers. Only free UK standard delivery is offered.
+                 To restore, uncomment these options AND their entries in shippingRates.
             <label class="shipping-option">
               <input type="radio" name="shippingMethod" value="express" />
               <span class="shipping-option__content">
@@ -301,6 +304,7 @@
                 <span class="shipping-option__meta">£15.99</span>
               </span>
             </label>
+            -->
             <label class="shipping-option">
               <input type="radio" name="shippingMethod" value="international" />
               <span class="shipping-option__content">
@@ -359,8 +363,8 @@
 
   <script src="./js/sanity-config.js?v=20260720"></script>
   <script src="./js/sanity-client.js?v=20261026"></script>
-  <script src="./js/products.js?v=20261026"></script>
-  <script src="./js/nav.js?v=20261026"></script>
+  <script src="./js/products.js?v=20261027"></script>
+  <script src="./js/nav.js?v=20261027"></script>
   <script src="./js/cart.js?v=20261026"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
@@ -379,9 +383,16 @@
          International has no published rate: it is confirmed with the customer. */
       const shippingRates = {
         standard: 0,
-        express: 4.99,
-        'same-day': 15.99,
+        // Hidden until Morayo confirms prices and couriers (see the markup note):
+        // express: 4.99,
+        // 'same-day': 15.99,
         international: null
+      };
+      /* Only a method listed in shippingRates can be charged; anything else
+         (e.g. a hidden option) falls back to free UK standard delivery */
+      const selectedDeliveryMethod = () => {
+        const input = document.querySelector('input[name="shippingMethod"]:checked');
+        return input && Object.prototype.hasOwnProperty.call(shippingRates, input.value) ? input.value : 'standard';
       };
 
       function updateCheckoutSummary() {
@@ -402,8 +413,7 @@
         `).join('');
         subtotalEl.textContent = formatPrice(subtotal);
 
-        const selectedShipping = document.querySelector('input[name="shippingMethod"]:checked');
-        const selectedRate = selectedShipping ? shippingRates[selectedShipping.value] : shippingRates.standard;
+        const selectedRate = shippingRates[selectedDeliveryMethod()];
         const shippingCost = selectedRate === null ? null : Number(selectedRate);
         const shippingLabel = selectedRate === null ? 'Contact us' : selectedRate === 0 ? 'Free' : formatPrice(selectedRate);
         shippingValueEl.textContent = shippingLabel;
@@ -485,8 +495,7 @@
           return;
         }
         const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const selectedShipping = document.querySelector('input[name="shippingMethod"]:checked');
-        const selectedMethod = selectedShipping ? selectedShipping.value : 'standard';
+        const selectedMethod = selectedDeliveryMethod();
         const selectedRate = shippingRates[selectedMethod];
         const shippingCost = selectedRate === null ? null : Number(selectedRate);
         const shippingLabel = selectedMethod === 'standard' ? SLD_DELIVERY.uk

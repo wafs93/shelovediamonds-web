@@ -10,6 +10,8 @@
    ============================================ */
 
 const { callOpenAI } = require('./_lib/openai');
+// Same sold out rule as the storefront (price missing/zero/not a number, or In Stock off)
+const { isProductSoldOut } = require('../js/products.js');
 
 const SANITY_PROJECT_ID = process.env.SANITY_PROJECT_ID || 'suyafnjq';
 const SANITY_DATASET = process.env.SANITY_DATASET || 'production';
@@ -177,10 +179,19 @@ module.exports = async (req, res) => {
     }
 
     const products = await sanityQuery(
-      `*[_type == "product"]{ _id, name, shortDesc, fullDesc, price, "imageUrl": mainImage.asset->url, "images": images[].asset->url }`
+      `*[_type == "product"]{ _id, name, shortDesc, fullDesc, price, inStock, "imageUrl": mainImage.asset->url, "images": images[].asset->url }`
     );
     if (!Array.isArray(products) || products.length === 0) {
       res.status(200).json({ skipped: true, reason: 'no products found in Sanity' });
+      return;
+    }
+
+    // Never promote a sold out piece
+    const available = products.filter((p) => !isProductSoldOut(p));
+    if (available.length === 0) {
+      const reason = 'every product is sold out';
+      console.log(`Auto-post skipped: ${reason} (${products.length} products checked)`);
+      res.status(200).json({ skipped: true, reason });
       return;
     }
 
@@ -189,8 +200,8 @@ module.exports = async (req, res) => {
       `*[_type == "scheduledPost"] | order(generatedAt desc) [0...5].product._ref`
     );
     const recentSet = new Set(Array.isArray(recentProductIds) ? recentProductIds : []);
-    const pool = products.filter((p) => !recentSet.has(p._id));
-    const candidates = pool.length > 0 ? pool : products;
+    const pool = available.filter((p) => !recentSet.has(p._id));
+    const candidates = pool.length > 0 ? pool : available;
     const product = candidates[Math.floor(Math.random() * candidates.length)];
     const imageUrl = product.imageUrl || (Array.isArray(product.images) && product.images[0]) || '';
 

@@ -171,7 +171,7 @@ function injectFooter() {
           <ul>
             <li><a href="https://wa.me/${SLD_CONFIG.whatsapp}" target="_blank">WhatsApp Us</a></li>
             <li><a href="mailto:${SLD_CONFIG.email}">Email Us</a></li>
-            <li><a href="#">Delivery Info</a></li>
+            <li><a href="/contact.html#delivery">Delivery Info</a></li>
             <li><a href="#">Returns</a></li>
           </ul>
         </div>

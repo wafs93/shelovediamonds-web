@@ -193,6 +193,11 @@ function isProductSoldOut(p) {
   return !hasValidPrice(p) || p.inStock === false;
 }
 
+/* Lets api/auto-post.js reuse the same sold out rule on the server */
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { hasValidPrice, isProductSoldOut };
+}
+
 /* Grid badge: "Sold out" replaces New / Bestseller etc. */
 function productBadge(p) {
   return isProductSoldOut(p) ? 'Sold out' : (p.badge || '');

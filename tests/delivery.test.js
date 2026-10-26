@@ -92,3 +92,27 @@ test('both AI brand prompts state free UK standard delivery and forbid inventing
   assert.ok(read('dashboard.html').includes(line));
   assert.ok(read('api/auto-post.js').includes(line));
 });
+
+test('checkout offers only free UK standard and worldwide delivery; hidden options can never be charged', () => {
+  const html = read('checkout.html');
+  const liveMarkup = html.replace(/<!--[\s\S]*?-->/g, '');
+  const methods = [...liveMarkup.matchAll(/name="shippingMethod" value="([^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(methods, ['standard', 'international']);
+  assert.match(html, /<!-- HIDDEN: Express and Same Day delivery are hidden until Morayo confirms/);
+  assert.doesNotMatch(liveMarkup, /£4\.99|£15\.99/);
+
+  const rates = html.match(/const shippingRates = \{([\s\S]*?)\};/)[1].replace(/\/\/.*$/gm, '');
+  assert.doesNotMatch(rates, /express|same-day/, 'hidden options must not have a live rate');
+  assert.match(html, /hasOwnProperty\.call\(shippingRates, input\.value\) \? input\.value : 'standard'/);
+  assert.equal((html.match(/shippingRates\[selectedDeliveryMethod\(\)\]/g) || []).length, 1);
+  assert.doesNotMatch(html, /shippingRates\[selectedShipping/);
+});
+
+test('footer "Delivery Info" goes to a delivery section with no international price', () => {
+  assert.match(read('js/nav.js'), /<a href="\/contact\.html#delivery">Delivery Info<\/a>/);
+  const contact = read('contact.html');
+  const section = contact.slice(contact.indexOf('id="delivery"'), contact.indexOf('<!-- Form -->'));
+  assert.match(section, /Free UK standard delivery on every order/);
+  assert.match(section, /Worldwide delivery available\. Ask us for details\./);
+  assert.doesNotMatch(section, /£|\$|€/);
+});
