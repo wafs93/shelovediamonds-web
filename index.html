@@ -213,30 +213,139 @@
 
     /* ── LOOKBOOK ── */
     .lookbook {
-      padding: 100px var(--section-pad);
-      background: var(--cream);
+      background: #14110F;
+      color: var(--cream);
+      padding: clamp(80px, 10vw, 150px) var(--section-pad);
+      overflow: hidden;
+    }
+    .lookbook__inner { max-width: 1320px; margin: 0 auto; }
+
+    .lookbook__head {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      column-gap: 32px;
+      align-items: end;
+      margin-bottom: clamp(56px, 8vw, 120px);
+    }
+    .lookbook__title {
+      grid-column: 1 / 9;
+      margin: 0;
+      font-family: var(--font-serif);
+      font-weight: 400;
+      font-size: clamp(2.8rem, 7.2vw, 6.6rem);
+      line-height: 1.02;
+      letter-spacing: -0.015em;
+      text-wrap: balance;
+      color: var(--cream);
+    }
+    .lookbook__lede {
+      grid-column: 9 / 13;
+      margin: 0 0 0.6em;
+      padding-top: 20px;
+      border-top: 1px solid rgba(212, 175, 112, 0.4);
+      max-width: 34ch;
+      font-size: 0.9rem;
+      line-height: 1.9;
+      color: rgba(250, 247, 242, 0.62);
     }
 
     .lookbook__grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-auto-rows: clamp(200px, 22vw, 320px);
-      grid-template-areas:
-        "tall1 wide  wide  tall2"
-        "tall1 small1 small2 tall2";
-      gap: 16px;
-      margin-top: 64px;
+      grid-template-columns: repeat(12, 1fr);
+      column-gap: 32px;
+      row-gap: clamp(64px, 9vw, 140px);
     }
+    .lookbook__item { margin: 0; }
+    .lb-1 { grid-column: 1 / 6;  grid-row: 1; }
+    .lb-2 { grid-column: 7 / 13; grid-row: 1; align-self: end; }
+    .lb-3 { grid-column: 2 / 6;  grid-row: 2; }
+    .lb-4 { grid-column: 7 / 13; grid-row: 2; align-self: center; }
+    .lb-5 { grid-column: 3 / 11; grid-row: 3; }
 
-    .lookbook__item { margin: 0; overflow: hidden; background: var(--cream-deeper); }
-    .lookbook__item img { display: block; width: 100%; height: 100%; object-fit: cover; }
-    .lookbook__item--tall1 { grid-area: tall1; }
-    .lookbook__item--tall1 img { object-position: 88% 100%; } /* keep the cufflink in frame */
-    .lookbook__item--small2 img { object-position: 58% 50%; } /* centre the pendant */
-    .lookbook__item--tall2 { grid-area: tall2; }
-    .lookbook__item--wide  { grid-area: wide; }
-    .lookbook__item--small1 { grid-area: small1; }
-    .lookbook__item--small2 { grid-area: small2; }
+    .lb-frame {
+      position: relative;
+      overflow: hidden;
+      background: #1d1916;
+    }
+    .lb-frame img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1.4s var(--ease);
+    }
+    .lb-frame::after { /* gold keyline, inset like a gallery mat */
+      content: '';
+      position: absolute;
+      inset: 14px;
+      border: 1px solid rgba(212, 175, 112, 0.55);
+      pointer-events: none;
+      transition: inset 0.9s var(--ease), opacity 0.9s var(--ease);
+    }
+    .lookbook__item:hover .lb-frame img { transform: scale(1.04); }
+    .lookbook__item:hover .lb-frame::after { inset: 22px; }
+
+    .lb-1 .lb-frame, .lb-3 .lb-frame { aspect-ratio: 2 / 3; }
+    .lb-2 .lb-frame, .lb-4 .lb-frame { aspect-ratio: 3 / 2; }
+    .lb-5 .lb-frame { aspect-ratio: 16 / 9; }
+    .lb-5 .lb-frame img { object-position: 50% 70%; }
+
+    .lookbook__item figcaption { margin-top: 22px; }
+    .lookbook__item figcaption::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      margin-bottom: 14px;
+      background: var(--gold-bright);
+    }
+    .lb-name {
+      display: block;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.2rem;
+      line-height: 1.3;
+      color: var(--cream);
+    }
+    .lb-note {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.78rem;
+      line-height: 1.7;
+      color: rgba(250, 247, 242, 0.55);
+    }
+    .lb-5 figcaption { text-align: center; }
+    .lb-5 figcaption::before { margin-left: auto; margin-right: auto; }
+
+    .lookbook__cta {
+      display: flex;
+      justify-content: center;
+      margin-top: clamp(64px, 8vw, 110px);
+    }
+    .lookbook__cta .btn:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 4px; }
+
+    /* One reveal for the whole section: each photo opens like a curtain as it scrolls in */
+    .lookbook.is-armed .lb-frame {
+      clip-path: inset(0 0 100% 0);
+      transition: clip-path 1.4s cubic-bezier(0.77, 0, 0.18, 1);
+    }
+    .lookbook.is-armed .lb-frame::after { opacity: 0; }
+    .lookbook.is-armed figcaption { opacity: 0; transition: opacity 0.9s var(--ease) 0.7s; }
+    .lookbook.is-armed .lookbook__item.in .lb-frame { clip-path: inset(0 0 0 0); }
+    .lookbook.is-armed .lookbook__item.in .lb-frame::after { opacity: 1; transition-delay: 0.9s; }
+    .lookbook.is-armed .lookbook__item.in figcaption { opacity: 1; }
+
+    @media (max-width: 900px) {
+      .lookbook__head { grid-template-columns: 1fr; }
+      .lookbook__title, .lookbook__lede { grid-column: 1 / -1; }
+      .lookbook__lede { margin-top: 28px; }
+      .lookbook__grid { grid-template-columns: 1fr; row-gap: 56px; }
+      .lookbook__item { grid-column: 1 / -1; grid-row: auto; align-self: auto; }
+      .lb-1 { width: 88%; }
+      .lb-3 { width: 80%; margin-left: auto; }
+      .lb-5 .lb-frame { aspect-ratio: 4 / 3; }
+      .lb-frame::after { inset: 10px; }
+    }
 
     /* ── BRAND STORY ── */
     .brand-story {
@@ -386,17 +495,6 @@
     }
 
     @media (max-width: 768px) {
-      .lookbook { padding: 72px var(--section-pad); }
-      .lookbook__grid {
-        grid-template-columns: 1fr 1fr;
-        grid-auto-rows: 52vw;
-        grid-template-areas:
-          "wide wide"
-          "tall1 tall2"
-          "small1 small2";
-        gap: 10px;
-        margin-top: 40px;
-      }
       .features { grid-template-columns: 1fr; }
       .feature-item { border-right: none; border-bottom: 1px solid rgba(250,247,242,0.06); }
       .hero__badge { left: 20px; bottom: 20px; padding: 14px 20px; }
@@ -529,33 +627,50 @@
   </section>
 
   <!-- LOOKBOOK -->
-  <section class="lookbook" id="lookbook">
-    <div class="section__header">
-      <div class="eyebrow">Lookbook</div>
-      <h2 class="section__title">Made to Be <em>Noticed</em></h2>
-      <p class="section__sub">Initials, names and sparkle, worn your way.</p>
-    </div>
-    <div class="lookbook__grid">
-      <figure class="lookbook__item lookbook__item--tall1">
-        <img src="images/lookbook-cufflink-cuff.jpg" width="1066" height="1600" loading="lazy" decoding="async"
-             alt="Man in a navy suit adjusting his shirt cuff, wearing a round gold cufflink set with sparkling stones">
-      </figure>
-      <figure class="lookbook__item lookbook__item--wide">
-        <img src="images/lookbook-gold-initial-cufflinks.jpg" width="1536" height="1024" loading="lazy" decoding="async"
-             alt="A pair of round gold initial cufflinks, L and A, with the letters set with sparkling stones">
-      </figure>
-      <figure class="lookbook__item lookbook__item--tall2">
-        <img src="images/lookbook-initial-pendant.jpg" width="1024" height="1536" loading="lazy" decoding="async"
-             alt="Initial D pendant on a fine chain, set with sparkling stones, hanging in front of a glass bottle">
-      </figure>
-      <figure class="lookbook__item lookbook__item--small1">
-        <img src="images/lookbook-white-gold-initial-cufflinks.jpg" width="1536" height="1024" loading="lazy" decoding="async"
-             alt="A pair of round white gold tone initial cufflinks, S and T, surrounded by rings of sparkling stones">
-      </figure>
-      <figure class="lookbook__item lookbook__item--small2">
-        <img src="images/lookbook-heart-initial-pendant.jpg" width="1536" height="1024" loading="lazy" decoding="async"
-             alt="Gold heart pendant with the initial F, set with sparkling stones, on a fine gold chain">
-      </figure>
+  <section class="lookbook" id="lookbook" aria-labelledby="lookbook-title">
+    <div class="lookbook__inner">
+      <div class="lookbook__head">
+        <h2 class="lookbook__title" id="lookbook-title">Your initial, worn close.</h2>
+        <p class="lookbook__lede">Initials, names and symbols, set in sparkling stones and made personal.</p>
+      </div>
+      <div class="lookbook__grid">
+        <figure class="lookbook__item lb-1">
+          <div class="lb-frame">
+            <img src="images/lookbook-cufflink-cuff.jpg" width="1066" height="1600" loading="lazy" decoding="async"
+                 alt="Man in a navy suit adjusting his shirt cuff, wearing a round gold cufflink set with sparkling stones">
+          </div>
+          <figcaption><span class="lb-name">Worn at the cuff</span><span class="lb-note">Noticed up close, remembered from across the room.</span></figcaption>
+        </figure>
+        <figure class="lookbook__item lb-2">
+          <div class="lb-frame">
+            <img src="images/lookbook-gold-initial-cufflinks.jpg" width="1536" height="1024" loading="lazy" decoding="async"
+                 alt="A pair of round gold initial cufflinks, L and A, with the letters set with sparkling stones">
+          </div>
+          <figcaption><span class="lb-name">Gold initial cufflinks</span><span class="lb-note">Your letter, set in stones.</span></figcaption>
+        </figure>
+        <figure class="lookbook__item lb-3">
+          <div class="lb-frame">
+            <img src="images/lookbook-initial-pendant.jpg" width="1024" height="1536" loading="lazy" decoding="async"
+                 alt="Initial D pendant on a fine chain, set with sparkling stones, hanging in front of a glass bottle">
+          </div>
+          <figcaption><span class="lb-name">The initial pendant</span><span class="lb-note">A letter that stays close.</span></figcaption>
+        </figure>
+        <figure class="lookbook__item lb-4">
+          <div class="lb-frame">
+            <img src="images/lookbook-white-gold-initial-cufflinks.jpg" width="1536" height="1024" loading="lazy" decoding="async"
+                 alt="A pair of round white gold tone initial cufflinks, S and T, surrounded by rings of sparkling stones">
+          </div>
+          <figcaption><span class="lb-name">White gold initial cufflinks</span><span class="lb-note">Two letters, one signature.</span></figcaption>
+        </figure>
+        <figure class="lookbook__item lb-5">
+          <div class="lb-frame">
+            <img src="images/lookbook-heart-initial-pendant.jpg" width="1536" height="1024" loading="lazy" decoding="async"
+                 alt="Gold heart pendant with the initial F, set with sparkling stones, on a fine gold chain">
+          </div>
+          <figcaption><span class="lb-name">The heart initial</span><span class="lb-note">For the person who holds yours.</span></figcaption>
+        </figure>
+      </div>
+      <div class="lookbook__cta"><a href="/shop.html" class="btn btn-outline-gold">Shop the collection</a></div>
     </div>
   </section>
 
@@ -616,6 +731,21 @@
   <script src="./js/products.js?v=20261027"></script>
   <script src="./js/nav.js?v=20261027"></script>
   <script src="./js/cart.js?v=20261026"></script>
+  <script>
+    /* Lookbook: each photo opens once, as it scrolls into view. Skipped for reduced motion. */
+    (function () {
+      var section = document.getElementById('lookbook');
+      if (!section || !('IntersectionObserver' in window) ||
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      section.classList.add('is-armed');
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0, rootMargin: '0px 0px -10% 0px' });
+      section.querySelectorAll('.lookbook__item').forEach(function (n) { io.observe(n); });
+    })();
+  </script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       injectNav('home');
