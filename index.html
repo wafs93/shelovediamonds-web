@@ -211,6 +211,33 @@
       background: var(--white);
     }
 
+    /* ── LOOKBOOK ── */
+    .lookbook {
+      padding: 100px var(--section-pad);
+      background: var(--cream);
+    }
+
+    .lookbook__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: clamp(200px, 22vw, 320px);
+      grid-template-areas:
+        "tall1 wide  wide  tall2"
+        "tall1 small1 small2 tall2";
+      gap: 16px;
+      margin-top: 64px;
+    }
+
+    .lookbook__item { margin: 0; overflow: hidden; background: var(--cream-deeper); }
+    .lookbook__item img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .lookbook__item--tall1 { grid-area: tall1; }
+    .lookbook__item--tall1 img { object-position: 88% 100%; } /* keep the cufflink in frame */
+    .lookbook__item--small2 img { object-position: 58% 50%; } /* centre the pendant */
+    .lookbook__item--tall2 { grid-area: tall2; }
+    .lookbook__item--wide  { grid-area: wide; }
+    .lookbook__item--small1 { grid-area: small1; }
+    .lookbook__item--small2 { grid-area: small2; }
+
     /* ── BRAND STORY ── */
     .brand-story {
       display: grid;
@@ -414,6 +441,17 @@
     }
 
     @media (max-width: 768px) {
+      .lookbook { padding: 72px var(--section-pad); }
+      .lookbook__grid {
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: 52vw;
+        grid-template-areas:
+          "wide wide"
+          "tall1 tall2"
+          "small1 small2";
+        gap: 10px;
+        margin-top: 40px;
+      }
       .features { grid-template-columns: 1fr; }
       .feature-item { border-right: none; border-bottom: 1px solid rgba(250,247,242,0.06); }
       .hero__badge { left: 20px; bottom: 20px; padding: 14px 20px; }
@@ -542,6 +580,37 @@
     <div class="grid-3" id="products-grid"></div>
     <div style="text-align:center; margin-top:48px">
       <a href="/shop.html" class="btn btn-outline">View All Pieces</a>
+    </div>
+  </section>
+
+  <!-- LOOKBOOK -->
+  <section class="lookbook" id="lookbook">
+    <div class="section__header">
+      <div class="eyebrow">Lookbook</div>
+      <h2 class="section__title">Made to Be <em>Noticed</em></h2>
+      <p class="section__sub">Initials, names and sparkle, worn your way.</p>
+    </div>
+    <div class="lookbook__grid">
+      <figure class="lookbook__item lookbook__item--tall1">
+        <img src="images/lookbook-cufflink-cuff.jpg" width="1066" height="1600" loading="lazy" decoding="async"
+             alt="Man in a navy suit adjusting his shirt cuff, wearing a round gold cufflink set with sparkling stones">
+      </figure>
+      <figure class="lookbook__item lookbook__item--wide">
+        <img src="images/lookbook-gold-initial-cufflinks.jpg" width="1536" height="1024" loading="lazy" decoding="async"
+             alt="A pair of round gold initial cufflinks, L and A, with the letters set with sparkling stones">
+      </figure>
+      <figure class="lookbook__item lookbook__item--tall2">
+        <img src="images/lookbook-initial-pendant.jpg" width="1024" height="1536" loading="lazy" decoding="async"
+             alt="Initial D pendant on a fine chain, set with sparkling stones, hanging in front of a glass bottle">
+      </figure>
+      <figure class="lookbook__item lookbook__item--small1">
+        <img src="images/lookbook-white-gold-initial-cufflinks.jpg" width="1536" height="1024" loading="lazy" decoding="async"
+             alt="A pair of round white gold tone initial cufflinks, S and T, surrounded by rings of sparkling stones">
+      </figure>
+      <figure class="lookbook__item lookbook__item--small2">
+        <img src="images/lookbook-heart-initial-pendant.jpg" width="1536" height="1024" loading="lazy" decoding="async"
+             alt="Gold heart pendant with the initial F, set with sparkling stones, on a fine gold chain">
+      </figure>
     </div>
   </section>
 
