@@ -359,6 +359,50 @@
       .product-gallery__thumbs { gap: 8px; }
       .thumb { width: 64px; height: 64px; }
     }
+  
+    /* ── REVIEWS ── */
+    .reviews { padding: 90px var(--section-pad); border-top: 1px solid var(--border); }
+    .reviews__inner { max-width: 900px; margin: 0 auto; }
+    .reviews__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; }
+    .reviews__title { margin: 0; font-family: var(--font-serif); font-weight: 400; font-size: clamp(1.6rem, 3vw, 2.2rem); color: var(--charcoal); }
+    .reviews__summary { display: flex; align-items: center; gap: 10px; font-size: 0.82rem; color: var(--text-mid); }
+    .reviews__policy { max-width: 62ch; margin: 20px 0 36px; font-size: 0.78rem; line-height: 1.8; color: var(--text-dim); }
+    .stars { color: var(--gold); letter-spacing: 2px; white-space: nowrap; }
+    .stars__off { color: rgba(184, 149, 90, 0.28); }
+    .reviews__empty { margin: 0; padding: 32px 0; border-top: 1px solid var(--border); font-family: var(--font-serif); font-style: italic; font-size: 1.05rem; color: var(--text-mid); }
+    .review-card { padding: 32px 0; border-top: 1px solid var(--border); }
+    .review-card__top { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+    .review-card__verified { font-size: 0.72rem; color: var(--gold-dim); }
+    .review-card__title { margin: 0 0 8px; font-family: var(--font-serif); font-weight: 400; font-size: 1.15rem; color: var(--charcoal); }
+    .review-card__body { margin: 0; max-width: 68ch; font-size: 0.9rem; line-height: 1.85; color: var(--text); white-space: pre-line; }
+    .review-card__by { margin-top: 14px; font-size: 0.78rem; color: var(--text-mid); }
+    .review-card__by span { color: var(--text-dim); }
+    .review-card__reply { margin-top: 18px; padding-left: 16px; border-left: 2px solid var(--gold); font-size: 0.84rem; line-height: 1.7; color: var(--text-mid); }
+    .review-card__reply p { margin: 4px 0 0; }
+
+    .review-form { margin: 0 0 40px; padding: 32px; background: var(--white); border: 1px solid var(--border); }
+    .review-form[hidden] { display: none; }
+    .review-form__row { margin-bottom: 20px; }
+    .review-form label.review-form__label, .review-form legend { display: block; margin-bottom: 8px; font-size: 0.72rem; letter-spacing: 0.08em; color: var(--text-mid); }
+    .review-form fieldset { border: 0; padding: 0; margin: 0 0 20px; }
+    .review-form input[type="text"], .review-form textarea { width: 100%; padding: 12px 14px; font: inherit; font-size: 0.9rem; color: var(--text); background: var(--cream); border: 1px solid var(--border); border-radius: 0; }
+    .review-form textarea { min-height: 130px; resize: vertical; line-height: 1.7; }
+    .review-form input:focus-visible, .review-form textarea:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    .review-form__two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .review-form__hint { margin-top: 6px; font-size: 0.7rem; color: var(--text-dim); }
+    .review-form__consent { display: flex; gap: 12px; align-items: flex-start; font-size: 0.8rem; line-height: 1.6; color: var(--text-mid); }
+    .review-form__consent input { margin-top: 4px; accent-color: var(--gold); }
+    .review-form__actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .review-form__status { font-size: 0.82rem; color: var(--text-mid); }
+    .review-form__status.is-error { color: #9b2c2c; }
+    .review-form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .review-thanks { margin: 0 0 40px; padding: 24px 28px; background: var(--gold-pale); font-size: 0.9rem; line-height: 1.7; color: var(--charcoal); }
+    .rating-input { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; }
+    .rating-input input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .rating-input label { font-size: 2rem; line-height: 1; color: rgba(184, 149, 90, 0.3); cursor: pointer; transition: color 0.2s; }
+    .rating-input label:hover, .rating-input label:hover ~ label, .rating-input input:checked ~ label { color: var(--gold); }
+    .rating-input input:focus-visible + label { outline: 2px solid var(--gold); outline-offset: 3px; }
+    @media (max-width: 640px) { .review-form { padding: 22px 18px; } .review-form__two { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -444,6 +488,65 @@
     </div>
   </div>
 
+  <!-- Customer reviews: only reviews the owner has published in Sanity are shown -->
+  <section class="reviews" id="reviews" aria-labelledby="reviews-title" hidden>
+    <div class="reviews__inner">
+      <div class="reviews__head">
+        <h2 class="reviews__title" id="reviews-title">Customer reviews</h2>
+        <div class="reviews__summary" id="reviews-summary"></div>
+        <button type="button" class="btn btn-outline" id="reviews-write" aria-expanded="false" aria-controls="review-form">Write a review</button>
+      </div>
+      <p class="reviews__policy" id="reviews-policy"></p>
+
+      <p class="review-thanks" id="review-thanks" role="status" hidden>
+        Thank you. Your review has been sent and will appear on this page once we have checked it.
+      </p>
+
+      <form class="review-form" id="review-form" hidden novalidate>
+        <fieldset>
+          <legend>Your rating</legend>
+          <div class="rating-input">
+            <input type="radio" name="rating" id="rate-5" value="5"><label for="rate-5" title="5 stars"><span aria-hidden="true">★</span><span class="sr-only" style="position:absolute;left:-9999px">5 stars</span></label>
+            <input type="radio" name="rating" id="rate-4" value="4"><label for="rate-4" title="4 stars"><span aria-hidden="true">★</span><span class="sr-only" style="position:absolute;left:-9999px">4 stars</span></label>
+            <input type="radio" name="rating" id="rate-3" value="3"><label for="rate-3" title="3 stars"><span aria-hidden="true">★</span><span class="sr-only" style="position:absolute;left:-9999px">3 stars</span></label>
+            <input type="radio" name="rating" id="rate-2" value="2"><label for="rate-2" title="2 stars"><span aria-hidden="true">★</span><span class="sr-only" style="position:absolute;left:-9999px">2 stars</span></label>
+            <input type="radio" name="rating" id="rate-1" value="1"><label for="rate-1" title="1 star"><span aria-hidden="true">★</span><span class="sr-only" style="position:absolute;left:-9999px">1 star</span></label>
+          </div>
+        </fieldset>
+        <div class="review-form__row">
+          <label class="review-form__label" for="review-title">Title (optional)</label>
+          <input type="text" id="review-title" name="title" maxlength="80" autocomplete="off">
+        </div>
+        <div class="review-form__row">
+          <label class="review-form__label" for="review-body">Your review</label>
+          <textarea id="review-body" name="body" maxlength="1500" required></textarea>
+          <div class="review-form__hint">At least 20 characters. Links are not allowed.</div>
+        </div>
+        <div class="review-form__two review-form__row">
+          <div>
+            <label class="review-form__label" for="review-name">First name and last initial</label>
+            <input type="text" id="review-name" name="name" maxlength="40" placeholder="Sandra M." autocomplete="name" required>
+          </div>
+          <div>
+            <label class="review-form__label" for="review-location">Location (optional)</label>
+            <input type="text" id="review-location" name="location" maxlength="40" placeholder="London" autocomplete="off">
+          </div>
+        </div>
+        <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+        <div class="review-form__row">
+          <label class="review-form__consent"><input type="checkbox" name="consent" id="review-consent"><span id="review-consent-text"></span></label>
+        </div>
+        <div class="review-form__actions">
+          <button type="submit" class="btn btn-dark" id="review-submit">Send review</button>
+          <span class="review-form__status" id="review-status" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+
+      <p class="reviews__empty" id="reviews-empty" hidden>No reviews yet. Bought this piece? Be the first to tell us what you think.</p>
+      <div id="reviews-list"></div>
+    </div>
+  </section>
+
   <!-- Related products -->
   <section class="related">
     <div class="section__header" style="text-align:left; margin-bottom:40px">
@@ -460,6 +563,74 @@
   <script src="./js/products.js?v=20261027"></script>
   <script src="./js/nav.js?v=20261027"></script>
   <script src="./js/cart.js?v=20261026"></script>
+  <script src="./js/reviews.js?v=20261110"></script>
+  <script>
+    /* Customer reviews: list, summary, write-a-review form */
+    async function initReviews(product, ldScript, ldData) {
+      const section = document.getElementById('reviews');
+      const form = document.getElementById('review-form');
+      const writeBtn = document.getElementById('reviews-write');
+      const status = document.getElementById('review-status');
+      section.hidden = false;
+      document.getElementById('reviews-policy').textContent = SLD_REVIEW_POLICY;
+      document.getElementById('review-consent-text').textContent = SLD_REVIEW_CONSENT;
+
+      writeBtn.addEventListener('click', () => {
+        const open = form.hidden;
+        form.hidden = !open;
+        writeBtn.setAttribute('aria-expanded', String(open));
+        if (open) document.getElementById('review-body').focus();
+      });
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(form);
+        const setStatus = (text, isError) => {
+          status.textContent = text;
+          status.classList.toggle('is-error', Boolean(isError));
+        };
+        if (!data.get('rating')) return setStatus('Please choose a star rating.', true);
+        if (String(data.get('body') || '').trim().length < 20) return setStatus('Please write at least 20 characters.', true);
+        if (String(data.get('name') || '').trim().length < 2) return setStatus('Please enter your first name and last initial.', true);
+        if (!data.get('consent')) return setStatus('Please tick the box to confirm.', true);
+
+        const submit = document.getElementById('review-submit');
+        submit.disabled = true;
+        setStatus('Sending...');
+        try {
+          await submitReview({
+            slug: product.slug,
+            rating: Number(data.get('rating')),
+            title: data.get('title'),
+            body: data.get('body'),
+            name: data.get('name'),
+            location: data.get('location'),
+            website: data.get('website'),
+            consent: true,
+          });
+          form.reset();
+          form.hidden = true;
+          writeBtn.setAttribute('aria-expanded', 'false');
+          setStatus('');
+          document.getElementById('review-thanks').hidden = false;
+        } catch (err) {
+          setStatus(err.message, true);
+        } finally {
+          submit.disabled = false;
+        }
+      });
+
+      const reviews = await fetchPublishedReviews({ slug: product.slug });
+      const { count, average } = summariseReviews(reviews);
+      document.getElementById('reviews-empty').hidden = count > 0;
+      document.getElementById('reviews-list').innerHTML = reviews.map((r) => reviewCardHtml(r)).join('');
+      if (count) {
+        document.getElementById('reviews-summary').innerHTML =
+          `${reviewStarsHtml(average)} <span>${average.toFixed(1)} out of 5 from ${count} review${count === 1 ? '' : 's'}</span>`;
+        ldScript.textContent = JSON.stringify(productJsonLdWithReviews(ldData, reviews)).replace(/</g, '\\u003c');
+      }
+    }
+  </script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       injectNav('shop');
@@ -503,6 +674,7 @@
       ld.type = 'application/ld+json';
       ld.textContent = JSON.stringify(productJsonLd(product, pageUrl)).replace(/</g, '\\u003c');
       document.head.appendChild(ld);
+      initReviews(product, ld, productJsonLd(product, pageUrl));
 
       document.getElementById('breadcrumb-name').textContent = product.name;
       document.getElementById('product-cat').textContent = product.category;

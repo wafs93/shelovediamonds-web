@@ -51,3 +51,12 @@ Set these in the Vercel project's Environment Variables (never in client-side co
 | `SANITY_PROJECT_ID`, `SANITY_DATASET` | Optional — default to the values already hardcoded in `js/sanity-config.js` |
 
 The cron schedule in `vercel.json` runs twice daily (`0 9 * * *` and `0 21 * * *` — 9am and 9pm UTC) as two separate daily jobs, since Vercel's Hobby plan only allows each individual cron job to run once per day. The worker only generates a draft when the selected weekday matches and the configured Europe/London time has already passed.
+## Customer reviews
+
+- Customers send a review from the product page. `api/reviews.js` checks it and saves it to Sanity as a **draft**, which the public website cannot read.
+- A review appears on the site only after the owner opens it in Sanity Studio (Customer Review) and clicks **Publish**.
+- Publish every genuine review, good or bad. Leave a review unpublished only if it is spam, abusive, off topic, or shows personal details. Never delete a review because it is negative.
+- Turn on **Verified purchase** only after checking the person bought the piece. Orders go through WhatsApp, so this is a manual check.
+- Star ratings are added to a product's structured data only when published reviews exist. The homepage reviews section stays hidden until 3 or more are published.
+- The promise shown to customers lives in `SLD_REVIEW_POLICY` in `js/reviews.js`. Keep it true: no paid or rewarded reviews.
+- Needs `SANITY_API_TOKEN` (Editor) in Vercel, and the Studio redeployed (`npm run deploy` in `sanity-studio/`) so the Customer Review type exists.

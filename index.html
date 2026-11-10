@@ -421,6 +421,27 @@
       color: var(--text-dim);
     }
 
+    /* ── CUSTOMER REVIEWS (shown only when 3 or more real reviews are published) ── */
+    .reviews-home { padding: clamp(72px, 9vw, 120px) var(--section-pad); background: var(--gold-pale); }
+    .reviews-home[hidden] { display: none; }
+    .reviews-home__inner { max-width: 1200px; margin: 0 auto; }
+    .reviews-home__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px 32px; margin-bottom: 40px; }
+    .reviews-home__title { margin: 0; font-family: var(--font-serif); font-weight: 400; font-size: clamp(1.8rem, 3.4vw, 2.8rem); color: var(--charcoal); }
+    .reviews-home__summary { font-size: 0.85rem; color: var(--text-mid); }
+    .reviews-home__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+    .reviews-home__policy { margin: 40px 0 0; max-width: 62ch; font-size: 0.76rem; line-height: 1.8; color: var(--text-mid); }
+    .reviews-home .stars { color: var(--gold); letter-spacing: 2px; }
+    .reviews-home .stars__off { color: rgba(184, 149, 90, 0.3); }
+    .reviews-home .review-card { padding: 24px 0 0; border-top: 1px solid var(--gold); }
+    .reviews-home .review-card__top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .reviews-home .review-card__verified { font-size: 0.7rem; color: var(--gold-dim); }
+    .reviews-home .review-card__title { margin: 0 0 8px; font-family: var(--font-serif); font-weight: 400; font-size: 1.1rem; color: var(--charcoal); }
+    .reviews-home .review-card__body { margin: 0; font-family: var(--font-serif); font-style: italic; font-size: 1rem; line-height: 1.75; color: var(--charcoal); }
+    .reviews-home .review-card__by { margin-top: 14px; font-size: 0.78rem; color: var(--text-mid); }
+    .reviews-home .review-card__product { display: inline-block; margin-top: 6px; font-size: 0.78rem; color: var(--gold-dim); }
+    .reviews-home .review-card__reply { display: none; }
+    @media (max-width: 900px) { .reviews-home__grid { grid-template-columns: 1fr; gap: 32px; } }
+
     /* ── NEWSLETTER ── */
     .newsletter {
       padding: 100px var(--section-pad);
@@ -708,6 +729,18 @@
     </div>
   </section>
 
+  <!-- CUSTOMER REVIEWS: hidden until at least 3 real, published reviews exist -->
+  <section class="reviews-home" id="home-reviews" aria-labelledby="home-reviews-title" hidden>
+    <div class="reviews-home__inner">
+      <div class="reviews-home__head">
+        <h2 class="reviews-home__title" id="home-reviews-title">What customers say</h2>
+        <div class="reviews-home__summary" id="home-reviews-summary"></div>
+      </div>
+      <div class="reviews-home__grid" id="home-reviews-grid"></div>
+      <p class="reviews-home__policy" id="home-reviews-policy"></p>
+    </div>
+  </section>
+
   <!-- NEWSLETTER -->
   <section class="newsletter">
     <div class="eyebrow" style="justify-content:center; color:rgba(212,175,112,0.7)">
@@ -731,6 +764,23 @@
   <script src="./js/products.js?v=20261027"></script>
   <script src="./js/nav.js?v=20261027"></script>
   <script src="./js/cart.js?v=20261026"></script>
+  <script src="./js/reviews.js?v=20261110"></script>
+  <script>
+    /* Customer reviews on the homepage: only real, published reviews, and only once there are 3 or more */
+    (async function () {
+      var section = document.getElementById('home-reviews');
+      if (!section || typeof fetchPublishedReviews !== 'function') return;
+      var reviews = await fetchPublishedReviews({ limit: 30 });
+      var stats = summariseReviews(reviews);
+      if (stats.count < 3) return;
+      document.getElementById('home-reviews-grid').innerHTML =
+        reviews.slice(0, 3).map(function (r) { return reviewCardHtml(r, { showProduct: true }); }).join('');
+      document.getElementById('home-reviews-summary').innerHTML =
+        reviewStarsHtml(stats.average) + ' ' + stats.average.toFixed(1) + ' out of 5 from ' + stats.count + ' reviews';
+      document.getElementById('home-reviews-policy').textContent = SLD_REVIEW_POLICY;
+      section.hidden = false;
+    })();
+  </script>
   <script>
     /* Lookbook: each photo opens once, as it scrolls into view. Skipped for reduced motion. */
     (function () {
