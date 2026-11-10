@@ -27,3 +27,8 @@ test('every lookbook image exists, uses a relative path and has alt text and dim
 test('lookbook copy makes no stone-origin claims', () => {
   assert.ok(!/\b(mined|lab[- ]grown|lab[- ]created|moissanite|ethically)\b/i.test(section));
 });
+
+test('the homepage has no invented customer testimonials', () => {
+  assert.ok(!/testimonial/i.test(html), 'testimonial markup or styles are back on the homepage');
+  assert.ok(!/Adaeze O\.|Sandra M\.|Chiamaka B\./.test(html));
+});

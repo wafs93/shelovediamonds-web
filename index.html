@@ -312,60 +312,6 @@
       color: var(--text-dim);
     }
 
-    /* ── TESTIMONIALS ── */
-    .testimonials {
-      padding: 120px var(--section-pad);
-      background: var(--gold-pale);
-    }
-
-    .testimonials__grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
-      margin-top: 64px;
-    }
-
-    .testimonial-card {
-      background: var(--white);
-      padding: 40px 32px;
-      position: relative;
-    }
-
-    .testimonial-card::before {
-      content: '"';
-      font-family: var(--font-serif);
-      font-size: 5rem;
-      color: var(--gold);
-      opacity: 0.2;
-      position: absolute;
-      top: 16px;
-      left: 24px;
-      line-height: 1;
-    }
-
-    .testimonial-text {
-      font-family: var(--font-serif);
-      font-size: 1rem;
-      font-style: italic;
-      color: var(--charcoal);
-      line-height: 1.7;
-      margin-bottom: 24px;
-      padding-top: 24px;
-    }
-
-    .testimonial-author {
-      font-size: 0.62rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-    }
-
-    .testimonial-location {
-      font-size: 0.62rem;
-      color: var(--text-dim);
-      margin-top: 2px;
-    }
-
     /* ── NEWSLETTER ── */
     .newsletter {
       padding: 100px var(--section-pad);
@@ -437,7 +383,6 @@
       .brand-story { grid-template-columns: 1fr; }
       .brand-story__img { height: 50vw; }
       .brand-story__content { padding: 60px var(--section-pad); }
-      .testimonials__grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 768px) {
@@ -645,40 +590,6 @@
         </div>
       </div>
       <a href="/our-story.html" class="btn btn-dark">Read Our Story</a>
-    </div>
-  </section>
-
-  <!-- TESTIMONIALS -->
-  <section class="testimonials">
-    <div class="section__header">
-      <div class="eyebrow">What She Says</div>
-      <h2 class="section__title">Women Who <em>Know Their Worth</em></h2>
-    </div>
-    <div class="testimonials__grid">
-      <div class="testimonial-card">
-        <p class="testimonial-text">
-          "I wore my Abayo bracelet to a board meeting and three women stopped me to ask where I got it.
-          It's not just jewellery — it's a statement."
-        </p>
-        <div class="testimonial-author">Adaeze O.</div>
-        <div class="testimonial-location">Lagos, Nigeria</div>
-      </div>
-      <div class="testimonial-card">
-        <p class="testimonial-text">
-          "The personalised name bracelet arrived beautifully packaged. My daughter cried when she opened it.
-          Worth every penny."
-        </p>
-        <div class="testimonial-author">Sandra M.</div>
-        <div class="testimonial-location">London, UK</div>
-      </div>
-      <div class="testimonial-card">
-        <p class="testimonial-text">
-          "Rivals Cartier energy at half the price. The craftsmanship is exceptional.
-          I've already ordered two more pieces."
-        </p>
-        <div class="testimonial-author">Chiamaka B.</div>
-        <div class="testimonial-location">Accra, Ghana</div>
-      </div>
     </div>
   </section>
 
